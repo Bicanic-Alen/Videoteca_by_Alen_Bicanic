@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Videoteca</string>
+    <string name="login">Accedi</string>
+    <string name="password">Password</string>
+    <string name="forgot_password">Password dimenticata?</string>
+    <string name="i_don_t_have_already_an_account">Non ho ancora un\' account</string>
+    <string name="email">Email</string>
+</resources>
