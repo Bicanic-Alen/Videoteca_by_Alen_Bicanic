@@ -1,19 +1,50 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.Videoteca" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.Videoteca" parent="Theme.Material3.DayNight">
         <!-- Customize your light theme here. -->
+        <item name="android:statusBarColor">@color/black</item>
+
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryVariant">@color/black</item>
-        <item name="colorOnPrimary">@color/gray_900</item>
+        <item name="colorPrimaryDark">@color/black</item>
+        <item name="colorOnPrimary">@color/black</item>
         <item name="colorSecondary">@color/gray_800</item>
         <item name="colorOnSecondary">@color/white</item>
         <item name="colorSecondaryVariant">@color/gray_200</item>
-        <item name="android:colorBackground">@color/gray_900</item>
         <item name="colorOnSurface">@color/gray_800</item>
+        <item name="colorError">@color/red_A700</item>
+        <item name="colorOnError">@color/white</item>
+
+
+
+    </style>
+
+    <style name="Theme.Videoteca" parent="Base.Theme.Videoteca" />
+
+    <style name="App.Costum.indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/gray_800</item>
+    </style>
+
+
+
+    <style name="Base.Theme.Videoteca_NoActionbar" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <item name="android:statusBarColor">@color/black</item>
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryVariant">@color/black</item>
+        <item name="colorPrimaryDark">@color/black</item>
+        <item name="backgroundColor">@color/gray_900</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorSecondary">@color/gray_800</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryVariant">@color/gray_200</item>
+        <item name="colorOnSurface">@color/gray_900</item>
         <item name="colorError">@color/red_A700</item>
         <item name="colorOnError">@color/white</item>
 
     </style>
 
-    <style name="Theme.Videoteca" parent="Base.Theme.Videoteca" />
+    <style name="Theme.Videoteca_NoActionbar" parent="Base.Theme.Videoteca" />
+
+
 </resources>

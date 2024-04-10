@@ -6,4 +6,9 @@
     <string name="forgot_password">Password dimenticata?</string>
     <string name="i_don_t_have_already_an_account">Non ho ancora un\' account</string>
     <string name="email">Email</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="home">Home</string>
+    <string name="favorites">Preferiti</string>
+    <string name="user_area">Area Personale</string>
+    <string name="watchlist">Watchlist</string>
 </resources>
