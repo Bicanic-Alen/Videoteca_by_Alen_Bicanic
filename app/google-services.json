@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "317876130057",
+    "project_id": "videoteca-ec23f",
+    "storage_bucket": "videoteca-ec23f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:317876130057:android:afab26ea4ed31bb3de43d8",
+        "android_client_info": {
+          "package_name": "videoteca.main"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKXZqc88HSSLhD3UIPxxElBw3n2ZDjRoY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

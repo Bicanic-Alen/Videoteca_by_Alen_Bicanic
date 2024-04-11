@@ -11,24 +11,34 @@
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/black"
         android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
+        android:paddingLeft="24dp"
+        android:paddingTop="24dp"
+        android:paddingRight="24dp"
+        android:paddingBottom="10dp"
+        android:background="?attr/colorOnSurface"
+        android:backgroundTint="?attr/colorOnSurface"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:menu="@menu/top_menu"
+
         app:navigationIcon="@drawable/ic_movie"
         app:title="@string/app_name"
-        app:titleTextColor="@color/white" />
+        app:titleTextColor="?attr/colorPrimary" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="0dp"
-        android:layout_height="76dp"
-        android:background="@color/black"
-        app:itemIconTint="@color/gray_200"
-        app:itemTextColor="@color/gray_200"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="12dp"
+        android:background="?attr/colorOnSurface"
+        android:backgroundTint="?attr/colorOnSurface"
+        app:itemIconTint="?attr/colorPrimary"
+        app:itemTextColor="?attr/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -36,8 +46,8 @@
         app:menu="@menu/botton_menu" />
 
     <FrameLayout
-        android:layout_width="409dp"
-        android:layout_height="589dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

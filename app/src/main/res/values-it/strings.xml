@@ -11,4 +11,7 @@
     <string name="favorites">Preferiti</string>
     <string name="user_area">Area Personale</string>
     <string name="watchlist">Watchlist</string>
+    <string name="search">Ricerca</string>
+    <string name="settings">Impostazioni</string>
+    <string name="authentication_failed">Auteticazione fallita.</string>
 </resources>
