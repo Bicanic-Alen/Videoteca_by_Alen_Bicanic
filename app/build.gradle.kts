@@ -52,5 +52,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.daimajia.easing:library:2.0@aar")
+    implementation("com.daimajia.androidanimations:library:2.3@aar")
 
 }

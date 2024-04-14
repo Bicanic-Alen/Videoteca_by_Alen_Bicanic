@@ -1,13 +1,11 @@
    package videoteca.main
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
@@ -20,10 +18,40 @@ import com.google.firebase.auth.auth
         checkCurrentUser()
 
 
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView.setOnItemSelectedListener { menuItem ->
+            when(menuItem.itemId){
+                R.id.home -> {
+                    replaceFragment(HomeFragment())
+                    true
+                }
+
+                R.id.favorites -> {
+                    replaceFragment(FavFragment())
+                    true
+                }
+
+                R.id.watchlist -> {
+                    replaceFragment(WatchlistFragment())
+                    true
+                }
+
+                R.id.user_area ->{
+                    replaceFragment(UserAreaFragment())
+                    true
+                }
+                else -> false
+
+            }
 
 
+
+        }
+
+        replaceFragment(HomeFragment())
 
     }
+
 
     private fun checkCurrentUser() {
         // [START check_current_user]
@@ -38,8 +66,13 @@ import com.google.firebase.auth.auth
 
 
     private fun startLoginActivity() {
-        val intent = Intent(this, Login::class.java)
+        val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish() //chiudo la activity corrente
     }
+
+   private fun replaceFragment(fragment: Fragment){
+       supportFragmentManager.beginTransaction().replace(R.id.frameLayout, fragment).commit()
+
+   }
 }

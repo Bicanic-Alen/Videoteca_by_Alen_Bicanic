@@ -11,18 +11,18 @@
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:minHeight="?attr/actionBarSize"
-        android:paddingLeft="24dp"
-        android:paddingTop="24dp"
-        android:paddingRight="24dp"
-        android:paddingBottom="10dp"
         android:background="?attr/colorOnSurface"
         android:backgroundTint="?attr/colorOnSurface"
+        android:minHeight="?attr/actionBarSize"
+        android:paddingLeft="24dp"
+        android:paddingTop="30dp"
+        android:paddingRight="24dp"
+        android:paddingBottom="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/top_menu"
 
+        app:menu="@menu/top_menu"
         app:navigationIcon="@drawable/ic_movie"
         app:title="@string/app_name"
         app:titleTextColor="?attr/colorPrimary" />
@@ -46,6 +46,7 @@
         app:menu="@menu/botton_menu" />
 
     <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"

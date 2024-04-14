@@ -14,4 +14,10 @@
     <string name="search">Ricerca</string>
     <string name="settings">Impostazioni</string>
     <string name="authentication_failed">Auteticazione fallita.</string>
+    <string name="logout">disconnettiti</string>
+    <string name="recover_your_password">Recupera la tua password</string>
+    <string name="recover_password">Recupera password</string>
+    <string name="preferred_genres">Generi preferiti</string>
+    <string name="movies_rented">Film nollegiati</string>
+    <string name="movies_reserved">Film prenotati</string>
 </resources>

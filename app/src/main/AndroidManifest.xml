@@ -13,10 +13,13 @@
         android:theme="@style/Theme.Videoteca"
         tools:targetApi="31">
         <activity
-            android:name=".Registrazione"
+            android:name=".ForgotPasswordActivity"
             android:exported="false" />
         <activity
-            android:name=".Login"
+            android:name=".RegistrazioneActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LoginActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

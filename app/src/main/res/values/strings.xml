@@ -14,4 +14,10 @@
     <string name="search">Search</string>
     <string name="settings">Settings</string>
     <string name="authentication_failed">Authentication failed.</string>
+    <string name="logout">Logout</string>
+    <string name="recover_your_password">Recover your password</string>
+    <string name="recover_password">Recover password</string>
+    <string name="preferred_genres">Preferred genres</string>
+    <string name="movies_rented">Movies rented</string>
+    <string name="movies_reserved">Movies reserved</string>
 </resources>

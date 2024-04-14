@@ -11,7 +11,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 
 
-class Login : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
 
 
 
@@ -28,6 +28,8 @@ class Login : AppCompatActivity() {
         val btn_login = findViewById<Button>(R.id.btn_login)
 
         btn_login.setOnClickListener {onclickAction(it)}
+        tv_restore.setOnClickListener{onclickAction(it)}
+        tv_signup.setOnClickListener{onclickAction(it)}
 
     }
 
@@ -47,6 +49,14 @@ class Login : AppCompatActivity() {
                         Toast.makeText(this, "Login fallito: $message", Toast.LENGTH_SHORT).show()
                     }
                 }
+            }
+            if(p0.id == R.id.tv_restorePws){
+                val intent = Intent(this, ForgotPasswordActivity::class.java)
+                startActivity(intent)
+            }
+            if(p0.id == R.id.tv_signup){
+                val intent = Intent(this, RegistrazioneActivity::class.java)
+                startActivity(intent)
             }
         }
     }
