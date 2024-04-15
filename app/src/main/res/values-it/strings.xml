@@ -20,4 +20,7 @@
     <string name="preferred_genres">Generi preferiti</string>
     <string name="movies_rented">Film nollegiati</string>
     <string name="movies_reserved">Film prenotati</string>
+    <string name="good_evening">Buona sera</string>
+    <string name="good_afternoon">Buon pomeriggio</string>
+    <string name="good_morning">Buongiorno</string>
 </resources>

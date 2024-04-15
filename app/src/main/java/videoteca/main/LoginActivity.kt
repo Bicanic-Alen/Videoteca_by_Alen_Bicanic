@@ -9,11 +9,18 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
+import android.content.SharedPreferences
+import android.util.Log
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 
 class LoginActivity : AppCompatActivity() {
 
-
+    private val mainScope = MainScope()
+    private lateinit var sharedInfo:SharedInfo
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,7 +28,7 @@ class LoginActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
 
-
+        sharedInfo = SharedInfo(this)
 
         val tv_restore = findViewById<TextView>(R.id.tv_restorePws)
         val tv_signup = findViewById<TextView>(R.id.tv_signup)
@@ -40,6 +47,20 @@ class LoginActivity : AppCompatActivity() {
                 val pws_input = findViewById<EditText>(R.id.pwsLogin_in).text.toString()
                 AuthService.login(email_input, pws_input) { success, message ->
                     if (success) {
+                        val db = DatabaseManager()
+                        val currentUser = AuthService.getCurrentUser()
+
+                        Log.d("UserAreaFragment", "c.user id = ${currentUser?.uid}")
+                        if(currentUser?.uid != null){
+                            Log.d("UserAreaFragment", "CurrentUser not null")
+                            mainScope.launch {
+                                val user = db.getCurrentUser(currentUser.uid)!!
+                                Log.d("UserAreaFragment", "name = ${user.name}")
+                                Log.d("UserAreaFragment", "surname = ${user.surname}")
+
+                                sharedInfo.saveUserData(user.name, user.surname, currentUser.uid)
+                            }
+                        }
                         // Login riuscito, apri l'Activity successiva
                         val intent = Intent(this, MainActivity::class.java)
                         startActivity(intent)
@@ -63,6 +84,12 @@ class LoginActivity : AppCompatActivity() {
 
 
 
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Chiudi il CoroutineScope quando l'attività viene distrutta per evitare memory leak
+        mainScope.cancel()
+    }
 
 
 

@@ -20,4 +20,7 @@
     <string name="preferred_genres">Preferred genres</string>
     <string name="movies_rented">Movies rented</string>
     <string name="movies_reserved">Movies reserved</string>
+    <string name="good_evening">Good evening</string>
+    <string name="good_afternoon">Good afternoon</string>
+    <string name="good_morning">Good morning</string>
 </resources>
