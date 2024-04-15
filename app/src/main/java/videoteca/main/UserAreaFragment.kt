@@ -26,6 +26,13 @@ class UserAreaFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //istanzio sharedinfo per recuperare le informazioni salvate nel sistema
+        val sharedInfo = SharedInfo(requireContext())
+        var textWelcome:String
+        val tvUserCurrent = view.findViewById<TextView>(R.id.tv_currentuser)
+        textWelcome = "${getGreeting()} ${sharedInfo.getUserName()} ${sharedInfo.getUserSurname()}"
+        tvUserCurrent.text = textWelcome
+
 
         val tvLogout = view.findViewById<TextView>(R.id.tv_logout)
         tvLogout.setOnClickListener {
@@ -35,33 +42,24 @@ class UserAreaFragment : Fragment() {
             requireActivity().finish()
         }
 
-        val sharedInfo = SharedInfo(requireContext())
+
 
 
         val tvSettings = view.findViewById<TextView>(R.id.tv_settings_ua)
         tvSettings.setOnClickListener {
-            val fragmentSettings = SettingsFragment()
-            val fragmentManager = requireActivity().supportFragmentManager
-            val transaction = fragmentManager.beginTransaction()
-            transaction.replace(R.id.frameLayout, fragmentSettings).commit()
-
+            changeFragment(SettingsFragment())
         }
 
         val tvRented = view.findViewById<TextView>(R.id.tv_rented)
-        tvSettings.setOnClickListener {  }
+        //tvRented.setOnClickListener {  }
 
         val tvReserved = view.findViewById<TextView>(R.id.tv_reserved)
-        tvSettings.setOnClickListener {  }
+        //tvReserved.setOnClickListener {  }
 
         val tvFav = view.findViewById<TextView>(R.id.tv_genres_fav)
-        tvSettings.setOnClickListener {  }
+        //tvFav.setOnClickListener {  }
 
-        var textWelcome:String
-        val tvUserCurrent = view.findViewById<TextView>(R.id.tv_currentuser)
-        textWelcome = "${getGreeting()} ${sharedInfo.getUserName()} ${sharedInfo.getUserSurname()}"
-        tvUserCurrent.text = textWelcome
-        Log.d("UserAreaFragment", "name (var) = ${sharedInfo.getUserName()}")
-        Log.d("UserAreaFragment", "surname (var) = ${sharedInfo.getUserSurname()}")
+
 
 
 
@@ -71,10 +69,18 @@ class UserAreaFragment : Fragment() {
         val calendar = Calendar.getInstance()
         val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
         return when {
-            hourOfDay < 12 -> getString(R.string.good_morning)
+            hourOfDay < 13 -> getString(R.string.good_morning)
             hourOfDay < 18 -> getString(R.string.good_afternoon)
             else -> getString(R.string.good_evening)
         }
+    }
+
+    private fun changeFragment(fragment: Fragment){
+        val fragmentManager = requireActivity().supportFragmentManager
+        val transaction = fragmentManager.beginTransaction()
+        transaction.replace(R.id.frameLayout, fragment)
+        transaction.addToBackStack(null) // Opzionale: aggiunge la transazione al back stack
+        transaction.commit()
     }
 
 
