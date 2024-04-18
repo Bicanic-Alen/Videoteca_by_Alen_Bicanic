@@ -9,12 +9,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import android.content.Context
-import android.content.SharedPreferences
 import android.util.Log
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import videoteca.main.gestioneAPI.AuthService
+import videoteca.main.gestioneAPI.DatabaseManager
 
 
 class LoginActivity : AppCompatActivity() {

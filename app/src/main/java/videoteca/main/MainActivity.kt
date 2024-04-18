@@ -8,6 +8,10 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import videoteca.main.Fragments.FavFragment
+import videoteca.main.Fragments.HomeFragment
+import videoteca.main.Fragments.UserAreaFragment
+import videoteca.main.Fragments.WatchlistFragment
 
    class MainActivity : AppCompatActivity() {
 

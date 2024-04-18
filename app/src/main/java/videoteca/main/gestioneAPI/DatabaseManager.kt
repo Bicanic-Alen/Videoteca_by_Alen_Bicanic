@@ -1,7 +1,6 @@
-package videoteca.main
+package videoteca.main.gestioneAPI
 
 import android.util.Log
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await

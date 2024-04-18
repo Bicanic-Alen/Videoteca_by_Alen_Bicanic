@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "videoteca.main"
-        minSdk = 24
+        minSdk = 30
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -56,5 +56,10 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.daimajia.easing:library:2.0@aar")
     implementation("com.daimajia.androidanimations:library:2.3@aar")
+    implementation("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.github.bumptech.glide:glide:5.0.0-rc01")
+
+
 
 }

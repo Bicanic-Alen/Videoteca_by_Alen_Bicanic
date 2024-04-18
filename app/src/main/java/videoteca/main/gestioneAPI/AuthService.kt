@@ -1,14 +1,8 @@
-package videoteca.main
+package videoteca.main.gestioneAPI
 
 import android.util.Log
-import com.google.firebase.Firebase
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.UserProfileChangeRequest
-import com.google.firebase.auth.userProfileChangeRequest
-import com.google.firebase.firestore.firestore
-import com.google.type.Date
 
 
 object AuthService {

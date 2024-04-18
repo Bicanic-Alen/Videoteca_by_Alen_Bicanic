@@ -11,7 +11,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
-import com.google.firebase.database.database
+import videoteca.main.gestioneAPI.AuthService
+import videoteca.main.gestioneAPI.DatabaseManager
+import videoteca.main.gestioneAPI.UserDB
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -40,7 +42,7 @@ class RegistrazioneActivity : AppCompatActivity() {
             etvPassword = findViewById<EditText>(R.id.etv_password).text.toString()
             Log.d(TAG, "pws utente $etvPassword")
 
-            AuthService.register(etvEmail, etvPassword){success, messageError ->
+            AuthService.register(etvEmail, etvPassword){ success, messageError ->
                 if (success){
 
                     etvName = findViewById<EditText>(R.id.etv_name).text.toString()
