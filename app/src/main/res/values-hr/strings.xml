@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Videoteca</string>
+    <string name="login">Prijava</string>
+    <string name="password">Lozinka</string>
+    <string name="forgot_password">Zaboravljena lozinka?</string>
+    <string name="i_don_t_have_already_an_account">Još nemam račun</string>
+    <string name="email">Email</string>
+    <string name="hello_blank_fragment">Pozdrav prazni fragmentu</string>
+    <string name="home">Home</string>
+    <string name="favorites">Omiljeni</string>
+    <string name="user_area">User Area</string>
+    <string name="watchlist">Watchlist</string>
+    <string name="search">Pretraga</string>
+    <string name="settings">Postavke</string>
+    <string name="authentication_failed">Neuspjela autentikacija.</string>
+    <string name="logout">Odjava</string>
+    <string name="recover_your_password">Obnovi svoju lozinku</string>
+    <string name="recover_password">Obnovi lozinku</string>
+    <string name="preferred_genres">Preferirani žanrovi</string>
+    <string name="movies_rented">Iznajmljeni filmovi</string>
+    <string name="movies_reserved">Rezervirani filmovi</string>
+    <string name="good_evening">Dobra večer</string>
+    <string name="good_afternoon">Dobar dan</string>
+    <string name="good_morning">Dobro jutro</string>
+    <string name="popular_movies">Popularni filmovi</string>
+    <string name="upcomming_movies">Dolazeći filmovi</string>
+    <string name="top_rated_movies">Najbolje ocijenjeni filmovi</string>
+    <string name="good_night">Laku noć</string>
+</resources>

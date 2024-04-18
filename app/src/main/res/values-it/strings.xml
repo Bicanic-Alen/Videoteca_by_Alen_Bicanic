@@ -23,4 +23,8 @@
     <string name="good_evening">Buona sera</string>
     <string name="good_afternoon">Buon pomeriggio</string>
     <string name="good_morning">Buongiorno</string>
+    <string name="popular_movies">Film Popolari</string>
+    <string name="upcomming_movies">Film In Arrivo</string>
+    <string name="top_rated_movies">Film Più Votati</string>
+    <string name="good_night">Buona notte</string>
 </resources>

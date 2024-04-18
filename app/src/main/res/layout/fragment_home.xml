@@ -37,9 +37,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginBottom="12dp"
-                android:text="Top Rated"
+                android:text="@string/top_rated_movies"
                 android:textAlignment="textStart"
                 android:textColor="?attr/colorPrimary"
                 android:textSize="34sp"
@@ -73,9 +73,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginBottom="12dp"
-                android:text="Popular"
+                android:text="@string/popular_movies"
                 android:textColor="?attr/colorPrimary"
                 android:textSize="36sp"
                 android:textStyle="bold" />
@@ -91,7 +91,7 @@
                     app:layout_constraintHeight_min="200dp" />
 
                 <ProgressBar
-                    android:id="@+id/progressBar3"
+                    android:id="@+id/progressBar2"
                     style="?android:attr/progressBarStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -107,9 +107,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginBottom="12dp"
-                android:text="Up comming"
+                android:text="@string/upcomming_movies"
                 android:textAlignment="textStart"
                 android:textColor="?attr/colorPrimary"
                 android:textSize="36sp"
@@ -126,7 +126,7 @@
                     app:layout_constraintHeight_min="200dp" />
 
                 <ProgressBar
-                    android:id="@+id/progressBar5"
+                    android:id="@+id/progressBar3"
                     style="?android:attr/progressBarStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

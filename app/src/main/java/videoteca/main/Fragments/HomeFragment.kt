@@ -6,17 +6,21 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import videoteca.main.Adapters.FilmAdapter
 import videoteca.main.Adapters.SliderAdapters
 import videoteca.main.Domain.SliderItems
 import videoteca.main.R
-import videoteca.main.gestioneAPI.TMDB_API_Manager
+import videoteca.main.gestioneAPI.Movie.MovieResponse
+import videoteca.main.gestioneAPI.TMDB_Manager
 import java.util.Locale
 import kotlin.math.abs
 
@@ -24,13 +28,20 @@ import kotlin.math.abs
 class HomeFragment : Fragment() {
 
 
+    private val tmdbApiManager:TMDB_Manager = TMDB_Manager()
     private lateinit var viewPager2: ViewPager2
     private lateinit var sliderHandler: Handler
+    private lateinit var recyclerViewTopRated : RecyclerView
+    private lateinit var recyclerViewPopular:RecyclerView
+    private lateinit var recyclerViewUpComming: RecyclerView
     private lateinit var adapterTopRating: Adapter<*>
     private lateinit var adapterUpComming:RecyclerView.Adapter<*>
     private lateinit var adapterPopular:RecyclerView.Adapter<*>
+    private lateinit var loadingBar1:ProgressBar
+    private lateinit var loadingBar2:ProgressBar
+    private lateinit var loadingBar3: ProgressBar
 
-    private val tmdbApiManager:TMDB_API_Manager = TMDB_API_Manager()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,16 +54,93 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
         viewPager2 = view.findViewById(R.id.viewPager2)
+
+        recyclerViewTopRated = view.findViewById(R.id.recyclerViewTopRated)
+        recyclerViewTopRated.setLayoutManager(LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false))
+
+        recyclerViewPopular = view.findViewById(R.id.recyclerViewPopular)
+        Log.d("HomeFragment", "$recyclerViewPopular")
+        recyclerViewPopular.setLayoutManager(LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false))
+        Log.d("HomeFragment", "$recyclerViewPopular")
+
+        recyclerViewUpComming = view.findViewById(R.id.recyclerViewUpComming)
+        recyclerViewUpComming.setLayoutManager(LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false))
+
+
+        loadingBar1 = view.findViewById(R.id.progressBar1)
+        loadingBar1.visibility = View.VISIBLE
+        loadingBar2 = view.findViewById(R.id.progressBar2)
+        loadingBar2.visibility = View.VISIBLE
+        loadingBar3 = view.findViewById(R.id.progressBar3)
+        loadingBar3.visibility = View.VISIBLE
+
+
         sliderHandler = Handler()
         banners()
-    }
 
-    private fun banners(){
-        val sliderItems = mutableListOf<SliderItems>()
+
+
+        var items:MovieResponse
+
         val currentLocale: Locale = Locale.getDefault()
         val languageTag: String = currentLocale.toLanguageTag()  //Restituisce il tag della lingua
 
         Log.d("HomeFragment","languageTag = $languageTag")
+
+        adapterPopular = FilmAdapter(MovieResponse().results) // Passa una lista vuota inizialmente
+        recyclerViewPopular.adapter = adapterPopular
+
+        tmdbApiManager.moviePopular(language = languageTag) { movieResponse ->
+            activity?.runOnUiThread { //entro del thread pricipale
+                if (movieResponse != null && activity != null && isAdded) {
+                    loadingBar2.visibility = View.GONE
+                    adapterPopular = FilmAdapter(movieResponse.results)
+                    recyclerViewPopular.adapter = adapterPopular
+                    Log.e("HomeFragment", "Success to fetch movies (popular)")
+                } else {
+                    Log.e("HomeFragment", "Failed to fetch movies (popular)")
+                }
+            }
+        }
+
+
+        tmdbApiManager.movieTopRated(language = languageTag) { movieResponse ->
+            activity?.runOnUiThread { //entro del thread pricipale
+                if (movieResponse != null && activity != null && isAdded) {
+                    loadingBar1.visibility = View.GONE
+                    adapterTopRating = FilmAdapter(movieResponse.results)
+                    recyclerViewTopRated.adapter = adapterTopRating
+                    Log.e("HomeFragment", "Success to fetch movies (top rated)")
+                } else {
+                    Log.e("HomeFragment", "Failed to fetch movies (top rated)")
+                }
+            }
+        }
+
+        tmdbApiManager.movieUpcomming(language = languageTag) { movieResponse ->
+            activity?.runOnUiThread { //entro del thread pricipale
+                if (movieResponse != null && activity != null && isAdded) {
+                    loadingBar3.visibility = View.GONE
+                    adapterUpComming = FilmAdapter(movieResponse.results)
+                    recyclerViewUpComming.adapter = adapterUpComming
+                    Log.e("HomeFragment", "Success to fetch movies (Upcomming)")
+                } else {
+                    Log.e("HomeFragment", "Failed to fetch movies (Upcomming)")
+                }
+            }
+        }
+
+
+
+
+
+
+    }
+
+    private fun banners(){
+        val sliderItems = mutableListOf<SliderItems>()
+
+
 
         sliderItems.add(SliderItems(R.drawable.img1))
         sliderItems.add(SliderItems(R.drawable.img2))

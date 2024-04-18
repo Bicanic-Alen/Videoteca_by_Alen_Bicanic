@@ -29,7 +29,7 @@ class UserAreaFragment : Fragment() {
         val sharedInfo = SharedInfo(requireContext())
         var textWelcome:String
         val tvUserCurrent = view.findViewById<TextView>(R.id.tv_currentuser)
-        textWelcome = "${getGreeting()} ${sharedInfo.getUserName()} ${sharedInfo.getUserSurname()}"
+        textWelcome = "${getGreeting()} ${sharedInfo.getUserName()}"
         tvUserCurrent.text = textWelcome
 
 
@@ -68,6 +68,7 @@ class UserAreaFragment : Fragment() {
         val calendar = Calendar.getInstance()
         val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
         return when {
+            hourOfDay < 4 || hourOfDay >= 22 -> getString(R.string.good_night)
             hourOfDay < 13 -> getString(R.string.good_morning)
             hourOfDay < 18 -> getString(R.string.good_afternoon)
             else -> getString(R.string.good_evening)
