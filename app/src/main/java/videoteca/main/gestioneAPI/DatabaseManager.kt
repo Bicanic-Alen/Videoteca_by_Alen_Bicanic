@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
+import videoteca.main.Domain.UserDB
 
 class DatabaseManager {
     private val db = FirebaseFirestore.getInstance()

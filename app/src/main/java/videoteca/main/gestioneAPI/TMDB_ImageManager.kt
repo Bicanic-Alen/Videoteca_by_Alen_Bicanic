@@ -1,10 +1,10 @@
 package videoteca.main.gestioneAPI
 
-import videoteca.main.gestioneAPI.Movie.ImageSize
-import videoteca.main.gestioneAPI.Movie.LogoSize
-import videoteca.main.gestioneAPI.Movie.PosterSize
-import videoteca.main.gestioneAPI.Movie.ProfileSize
-import videoteca.main.gestioneAPI.Movie.StillSize
+import videoteca.main.Domain.Movie.ImageSize
+import videoteca.main.Domain.Movie.LogoSize
+import videoteca.main.Domain.Movie.PosterSize
+import videoteca.main.Domain.Movie.ProfileSize
+import videoteca.main.Domain.Movie.StillSize
 
 class TMDB_ImageManager {
     private val base_url = "https://image.tmdb.org/t/p"

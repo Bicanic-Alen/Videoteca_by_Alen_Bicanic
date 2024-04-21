@@ -27,4 +27,11 @@
     <string name="upcomming_movies">Film In Arrivo</string>
     <string name="top_rated_movies">Film Più Votati</string>
     <string name="good_night">Buona notte</string>
+    <string name="details">Detagli</string>
+    <string name="rent">Noleggia</string>
+    <string name="summary">Trama</string>
+    <string name="actors">Cast</string>
+    <string name="recommended_films">Film Consigliati</string>
+    <string name="genres">Generi</string>
+    <string name="this_content_is_currently_not_available_for_rental">Questo contenuto non è attualmente disponibile per il noleggio</string>
 </resources>

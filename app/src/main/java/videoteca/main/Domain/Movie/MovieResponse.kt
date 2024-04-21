@@ -1,4 +1,4 @@
-package videoteca.main.gestioneAPI.Movie
+package videoteca.main.Domain.Movie
 
 data class MovieResponse(
     val page: Int = 0,

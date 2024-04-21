@@ -13,7 +13,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
 import videoteca.main.gestioneAPI.AuthService
 import videoteca.main.gestioneAPI.DatabaseManager
-import videoteca.main.gestioneAPI.UserDB
+import videoteca.main.Domain.UserDB
 import java.text.SimpleDateFormat
 import java.util.*
 

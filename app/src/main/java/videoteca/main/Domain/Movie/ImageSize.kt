@@ -1,4 +1,4 @@
-package videoteca.main.gestioneAPI.Movie
+package videoteca.main.Domain.Movie
 
 enum class ImageSize(val value: String) {
     W300("w300"),

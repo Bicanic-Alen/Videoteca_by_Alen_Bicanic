@@ -8,11 +8,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import videoteca.main.gestioneAPI.Movie.ImageMovie
-import videoteca.main.gestioneAPI.Movie.MovieResponse.Movie
-import videoteca.main.gestioneAPI.Movie.MovieImages
-import videoteca.main.gestioneAPI.Movie.MovieResponse
-import java.lang.Exception
+import videoteca.main.Domain.GenreList
+import videoteca.main.Domain.Movie.CreditsMovie
+import videoteca.main.Domain.Movie.MovieDetails
+import videoteca.main.Domain.Movie.MovieResponse.Movie
+import videoteca.main.Domain.Movie.MovieImages
+import videoteca.main.Domain.Movie.MovieResponse
+import videoteca.main.Domain.Movie.MovieResponseRecommended
+
+import kotlin.Exception
 
 class TMDB_Manager {
 
@@ -23,7 +27,7 @@ class TMDB_Manager {
     private val apiKey = "94610c56d8ca01615eb4c8ad88a59d79"
     private val accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5NDYxMGM1NmQ4Y2EwMTYxNWViNGM4YWQ4OGE1OWQ3OSIsInN1YiI6IjY2MWQ5ZGEwNTI4YjJlMDE2NDNlNDA3ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.7lBtujdrJbwjditULHEySQ3zrF80lSsQz8JKAwYos7U"
 
-    fun movieDiscover(language: String, callback: (MovieResponse?) -> Unit) {
+    fun getMovieDiscover(language: String, callback: (MovieResponse?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getMovieDiscoverAsync(language)
             Log.d(TAG, "response : $response")
@@ -31,7 +35,7 @@ class TMDB_Manager {
         }
     }
 
-    fun moviePopular(language: String, callback: (MovieResponse?) -> Unit) {
+    fun getMoviePopular(language: String, callback: (MovieResponse?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getMoviePopularAsync(language)
             Log.d(TAG, "response : $response")
@@ -39,14 +43,14 @@ class TMDB_Manager {
         }
     }
 
-    fun movieTopRated(language: String, callback: (MovieResponse?) -> Unit) {
+    fun getMovieTopRated(language: String, callback: (MovieResponse?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getMovieTopRatedAsync(language)
             Log.d(TAG, "response : $response")
             callback(response)
         }
     }
-    fun movieUpcomming(language: String, callback: (MovieResponse?) -> Unit) {
+    fun getMovieUpcomming(language: String, callback: (MovieResponse?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getMovieUpcommingAsync(language)
             Log.d(TAG, "response : $response")
@@ -55,10 +59,89 @@ class TMDB_Manager {
     }
 
 
-    fun movieImage(movieId: Int, language: String, callback: (MovieImages?) -> Unit) {
+    fun getMovieImage(movieId: Int, language: String, callback: (MovieImages?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getMovieImageAsync(movieId, language)
             callback(response)
+        }
+    }
+
+
+    fun getMovieDetails(movieId: Int, language: String, callback: (MovieDetails?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = getMovieDetailsAsync(movieId, language)
+            callback(response)
+        }
+    }
+
+    fun getMovieCredits(movieId: Int, language: String, callback: (CreditsMovie?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = getMovieCreditsAsync(movieId, language)
+            callback(response)
+        }
+    }
+
+    //Recommendations
+    fun getMovieRecommendations(movieId : Int,language: String, callback: (MovieResponseRecommended?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = getMovieRecommendationsAsync(movieId, language)
+            Log.d(TAG, "response : $response")
+            callback(response)
+        }
+    }
+
+    fun getGenres(language: String, callback: (GenreList?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = getGenresAsync(language)
+            Log.d(TAG, "response : $response")
+            callback(response)
+        }
+    }
+
+
+    private suspend fun getGenresAsync(language:String):GenreList?{
+        return try{
+            val client = OkHttpClient()
+
+            val request = Request.Builder()
+                .url("https://api.themoviedb.org/3/genre/movie/list?language=${language}")
+                .get()
+                .addHeader("accept", "application/json")
+                .addHeader("Authorization", "Bearer ${accessToken}")
+                .build()
+
+            val response = client.newCall(request).execute()
+
+            val responseBody = response.body?.string()
+            val genreList = Gson().fromJson(responseBody, GenreList::class.java)
+
+            Log.d(TAG, "Success fetching genre list: $genreList")
+            genreList
+
+        }catch (e:Exception){
+            Log.e(TAG, "Error fetching genre list", e)
+            null
+        }
+    }
+
+    private suspend fun getMovieRecommendationsAsync(movieId: Int, language: String): MovieResponseRecommended? {
+        return try {
+            val client = OkHttpClient()
+
+            val request = Request.Builder()
+                .url("https://api.themoviedb.org/3/movie/${movieId}/recommendations?language=${language}&page=1")
+                .get()
+                .addHeader("accept", "application/json")
+                .addHeader("Authorization", "Bearer ${accessToken}")
+                .build()
+
+            val response = client.newCall(request).execute()
+            val responseBody = response.body?.string()
+            val movieResponseRecommended = Gson().fromJson(responseBody, MovieResponseRecommended::class.java)
+            movieResponseRecommended
+        } catch (e: Exception) {
+            Log.e(TAG, "Error fetching movies", e)
+            null
         }
     }
 
@@ -316,7 +399,7 @@ class TMDB_Manager {
     private suspend fun getMovieImageAsync(movieId: Int, language: String): MovieImages? {
         return try {
             val request = Request.Builder()
-                .url("https://api.themoviedb.org/3/movie/$movieId/images?include_image_language=$language&language=en")
+                .url("https://api.themoviedb.org/3/movie/$movieId/images?include_image_language=$language")
                 .get()
                 .addHeader("accept", "application/json")
                 .addHeader("Authorization", "Bearer $accessToken")
@@ -326,54 +409,8 @@ class TMDB_Manager {
 
             if (response.isSuccessful) {
                 val responseBody = response.body?.string()
-                val jsonObjectBase: JsonObject = gson.fromJson(responseBody, JsonObject::class.java)
-                val backdrops = mutableListOf<ImageMovie>()
-                for (backdrop in jsonObjectBase["backdrops"].asJsonArray) {
-                    val bd = backdrop.asJsonObject
-                    backdrops.add(
-                        ImageMovie(
-                            bd["aspect_ratio"].asDouble,
-                            bd["height"].asInt,
-                            bd["iso_639_1"].asString,
-                            bd["file_path"].asString,
-                            bd["vote_average"].asDouble,
-                            bd["vote_count"].asInt,
-                            bd["width"].asInt
-                        )
-                    )
-                }
-                val id = jsonObjectBase["id"].asInt
-                val posters = mutableListOf<ImageMovie>()
-                for (poster in jsonObjectBase["posters"].asJsonArray) {
-                    val pr = poster.asJsonObject;
-                    posters.add(
-                        ImageMovie(
-                            pr["aspect_ratio"].asDouble,
-                            pr["height"].asInt,
-                            pr["iso_639_1"].asString,
-                            pr["file_path"].asString,
-                            pr["vote_average"].asDouble,
-                            pr["vote_count"].asInt,
-                            pr["width"].asInt
-                        )
-                    )
-                }
-                val logos = mutableListOf<ImageMovie>()
-                for (logo in jsonObjectBase.asJsonArray) {
-                    val lg = logo.asJsonObject
-                    logos.add(
-                        ImageMovie(
-                            lg["aspect_ratio"].asDouble,
-                            lg["height"].asInt,
-                            lg["iso_639_1"].asString,
-                            lg["file_path"].asString,
-                            lg["vote_average"].asDouble,
-                            lg["vote_count"].asInt,
-                            lg["width"].asInt
-                        )
-                    )
-                }
-                MovieImages(backdrops, id, logos, posters)
+                val movieImages = Gson().fromJson(responseBody, MovieImages::class.java)
+                movieImages
             } else {
                 null
             }
@@ -382,4 +419,58 @@ class TMDB_Manager {
             null
         }
     }
+
+
+
+    private suspend fun getMovieDetailsAsync(movieId: Int, language: String): MovieDetails? {
+        return try {
+            val client = OkHttpClient()
+
+            val request = Request.Builder()
+                .url("https://api.themoviedb.org/3/movie/${movieId}?append_to_response=videos&language=${language}")
+                .get()
+                .addHeader("accept", "application/json")
+                .addHeader("Authorization", "Bearer ${accessToken}")
+                .build()
+
+            val response = client.newCall(request).execute()
+
+            if (response.isSuccessful) {
+                val responseBody = response.body?.string()
+                val movieDetails = Gson().fromJson(responseBody, MovieDetails::class.java)
+
+                movieDetails //oggetto restituito
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error fetching movies", e)
+            null
+        }
+    }
+
+
+    private suspend fun getMovieCreditsAsync(movieId: Int, language:String): CreditsMovie?{
+
+        return try{
+            val client = OkHttpClient()
+
+            val request = Request.Builder()
+                .url("https://api.themoviedb.org/3/movie/${movieId}/credits?language=${language}")
+                .get()
+                .addHeader("accept", "application/json")
+                .addHeader("Authorization", "Bearer ${accessToken}")
+                .build()
+
+            val response = client.newCall(request).execute()
+            val responseBody = response.body?.string()
+            val creditsMovie = Gson().fromJson(responseBody, CreditsMovie::class.java)
+            creditsMovie
+
+        }catch (e: Exception){
+            Log.e(TAG, "Error fetching movie credits", e)
+            return null
+        }
+    }
+
 }

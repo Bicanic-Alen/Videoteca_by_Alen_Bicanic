@@ -27,4 +27,11 @@
     <string name="upcomming_movies">Dolazeći filmovi</string>
     <string name="top_rated_movies">Najbolje ocijenjeni filmovi</string>
     <string name="good_night">Laku noć</string>
+    <string name="details">detalji</string>
+    <string name="rent">Rentaj</string>
+    <string name="summary">Sadržaj</string>
+    <string name="actors">Cast</string>
+    <string name="recommended_films">Preporučeni filmovi</string>
+    <string name="genres">Žanrovi</string>
+    <string name="this_content_is_currently_not_available_for_rental">Ovaj sadržaj trenutno nije dostupan za najam</string>
 </resources>

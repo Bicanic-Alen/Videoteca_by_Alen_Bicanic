@@ -1,4 +1,4 @@
-package videoteca.main.gestioneAPI
+package videoteca.main.Domain
 
 import com.google.firebase.Timestamp
 

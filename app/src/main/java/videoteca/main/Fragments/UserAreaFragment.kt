@@ -52,8 +52,7 @@ class UserAreaFragment : Fragment() {
         val tvRented = view.findViewById<TextView>(R.id.tv_rented)
         //tvRented.setOnClickListener {  }
 
-        val tvReserved = view.findViewById<TextView>(R.id.tv_reserved)
-        //tvReserved.setOnClickListener {  }
+
 
         val tvFav = view.findViewById<TextView>(R.id.tv_genres_fav)
         //tvFav.setOnClickListener {  }

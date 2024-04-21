@@ -16,10 +16,12 @@ import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import videoteca.main.Adapters.FilmAdapter
+import videoteca.main.Adapters.GenreAdapter
 import videoteca.main.Adapters.SliderAdapters
+import videoteca.main.Domain.GenreList
 import videoteca.main.Domain.SliderItems
 import videoteca.main.R
-import videoteca.main.gestioneAPI.Movie.MovieResponse
+import videoteca.main.Domain.Movie.MovieResponse
 import videoteca.main.gestioneAPI.TMDB_Manager
 import java.util.Locale
 import kotlin.math.abs
@@ -34,12 +36,15 @@ class HomeFragment : Fragment() {
     private lateinit var recyclerViewTopRated : RecyclerView
     private lateinit var recyclerViewPopular:RecyclerView
     private lateinit var recyclerViewUpComming: RecyclerView
+    private lateinit var recyclerViewGenres: RecyclerView
     private lateinit var adapterTopRating: Adapter<*>
     private lateinit var adapterUpComming:RecyclerView.Adapter<*>
     private lateinit var adapterPopular:RecyclerView.Adapter<*>
+    private lateinit var adapterGenres:RecyclerView.Adapter<*>
     private lateinit var loadingBar1:ProgressBar
     private lateinit var loadingBar2:ProgressBar
     private lateinit var loadingBar3: ProgressBar
+    private lateinit var loadingBar4:ProgressBar
 
 
 
@@ -66,6 +71,10 @@ class HomeFragment : Fragment() {
         recyclerViewUpComming = view.findViewById(R.id.recyclerViewUpComming)
         recyclerViewUpComming.setLayoutManager(LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false))
 
+        recyclerViewGenres = view.findViewById(R.id.recyclerViewGenresHomePage)
+        recyclerViewGenres.setLayoutManager(LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false))
+
+
 
         loadingBar1 = view.findViewById(R.id.progressBar1)
         loadingBar1.visibility = View.VISIBLE
@@ -73,6 +82,8 @@ class HomeFragment : Fragment() {
         loadingBar2.visibility = View.VISIBLE
         loadingBar3 = view.findViewById(R.id.progressBar3)
         loadingBar3.visibility = View.VISIBLE
+        loadingBar4 = view.findViewById(R.id.progressBar4)
+        loadingBar4.visibility = View.VISIBLE
 
 
         sliderHandler = Handler()
@@ -80,44 +91,63 @@ class HomeFragment : Fragment() {
 
 
 
-        var items:MovieResponse
+        var items: MovieResponse
 
         val currentLocale: Locale = Locale.getDefault()
+        val language:String = currentLocale.language
         val languageTag: String = currentLocale.toLanguageTag()  //Restituisce il tag della lingua
 
         Log.d("HomeFragment","languageTag = $languageTag")
 
-        adapterPopular = FilmAdapter(MovieResponse().results) // Passa una lista vuota inizialmente
+        adapterPopular = FilmAdapter(MovieResponse().results)
         recyclerViewPopular.adapter = adapterPopular
 
-        tmdbApiManager.moviePopular(language = languageTag) { movieResponse ->
+
+        adapterGenres = GenreAdapter(GenreList())
+        recyclerViewGenres.adapter = adapterGenres
+
+        tmdbApiManager.getMoviePopular(language = languageTag) { movieResponse ->
             activity?.runOnUiThread { //entro del thread pricipale
                 if (movieResponse != null && activity != null && isAdded) {
                     loadingBar2.visibility = View.GONE
                     adapterPopular = FilmAdapter(movieResponse.results)
                     recyclerViewPopular.adapter = adapterPopular
-                    Log.e("HomeFragment", "Success to fetch movies (popular)")
+                    Log.d("HomeFragment", "Success to fetch movies (popular)")
                 } else {
                     Log.e("HomeFragment", "Failed to fetch movies (popular)")
                 }
             }
         }
 
+        tmdbApiManager.getGenres(language){it->
+            activity?.runOnUiThread{
+                if(it!=null){
+                    loadingBar4.visibility = View.GONE
+                    adapterGenres = GenreAdapter(it)
+                    recyclerViewGenres.adapter = adapterGenres
+                    Log.d("HomeFragment", "Success to fetch genres")
+                }else {
+                    Log.e("HomeFragment", "Failed to fetch genres")
+                }
+            }
 
-        tmdbApiManager.movieTopRated(language = languageTag) { movieResponse ->
+        }
+
+
+        tmdbApiManager.getMovieTopRated(language = languageTag) { movieResponse ->
             activity?.runOnUiThread { //entro del thread pricipale
                 if (movieResponse != null && activity != null && isAdded) {
                     loadingBar1.visibility = View.GONE
                     adapterTopRating = FilmAdapter(movieResponse.results)
                     recyclerViewTopRated.adapter = adapterTopRating
-                    Log.e("HomeFragment", "Success to fetch movies (top rated)")
+                    Log.d("HomeFragment", "Success to fetch movies (top rated)")
                 } else {
                     Log.e("HomeFragment", "Failed to fetch movies (top rated)")
                 }
             }
         }
 
-        tmdbApiManager.movieUpcomming(language = languageTag) { movieResponse ->
+        tmdbApiManager.getMovieUpcomming(language = languageTag) { movieResponse ->
             activity?.runOnUiThread { //entro del thread pricipale
                 if (movieResponse != null && activity != null && isAdded) {
                     loadingBar3.visibility = View.GONE

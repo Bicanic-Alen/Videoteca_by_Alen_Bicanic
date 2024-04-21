@@ -7,9 +7,10 @@
         <item name="colorSecondary">@color/white</item>
         <item name="colorSecondaryVariant">@color/white</item>
         <item name="colorOnPrimarySurface">@color/gray_300</item>
-        <item name="colorOnPrimary">@color/gray_100</item>
+        <item name="colorOnPrimary">@color/gray_200</item>
         <item name="colorOnSurface">@color/gray_300</item>
         <item name="colorOnContainer">@color/gray_300</item>
+        <item name="colorTertiary">@color/gray_400</item>
         <item name="colorError">@color/red_A700</item>
         <item name="colorOnSecondary">@color/gray_800</item>
     </style>

@@ -7,7 +7,7 @@
     android:layout_margin="6dp">
 
     <ImageView
-        android:id="@+id/iv_poster_2"
+        android:id="@+id/iv_poster_recommended"
         android:layout_width="150dp"
         android:layout_height="225dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -16,21 +16,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginEnd="4dp"
-        android:lines="2"
-        android:maxLines="2"
-        android:text="TextView"
-        android:textAlignment="center"
-        android:textColor="?attr/colorPrimary"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="@+id/iv_poster_2"
-        app:layout_constraintStart_toStartOf="@+id/iv_poster_2"
-        app:layout_constraintTop_toBottomOf="@+id/iv_poster_2" />
 </androidx.constraintlayout.widget.ConstraintLayout>
