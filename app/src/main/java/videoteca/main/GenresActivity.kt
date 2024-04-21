@@ -1,11 +1,16 @@
 package videoteca.main
 
 import android.os.Bundle
+import android.text.Layout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.LayoutManager
+import videoteca.main.Adapters.TwoMoviesForRowAdapter
 import videoteca.main.gestioneAPI.TMDB_Manager
 import java.util.Locale
 
@@ -13,6 +18,9 @@ class GenresActivity : AppCompatActivity() {
 
     private val tmdbManager = TMDB_Manager()
     private val currentLocale: Locale = Locale.getDefault()
+    private lateinit var recyclerViewTwoMoviesForRow:RecyclerView
+    private lateinit var adapterTwoMoviesForRowAdapter: TwoMoviesForRowAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -24,9 +32,8 @@ class GenresActivity : AppCompatActivity() {
         val language = currentLocale.language //recupera la lingua del dispositivo (es. "it")
         val languageTag = currentLocale.toLanguageTag()
 
-        val toolbarDetails = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarGenres)
-        setSupportActionBar(toolbarDetails)
-        toolbarDetails.setNavigationOnClickListener {
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
 
@@ -40,8 +47,30 @@ class GenresActivity : AppCompatActivity() {
                         }
                     }
                 }
-
             }
         }
+
+        recyclerViewTwoMoviesForRow = findViewById(R.id.recyclerView_twomoviesforrow)
+        recyclerViewTwoMoviesForRow.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
+        adapterTwoMoviesForRowAdapter = TwoMoviesForRowAdapter(emptyList())
+        recyclerViewTwoMoviesForRow.adapter = adapterTwoMoviesForRowAdapter
+
+        var page:Int = 1
+
+
+        tmdbManager.getMovieDiscover(languageTag, idGenres, page){it->
+            this.runOnUiThread{
+                if(it!=null){
+                    adapterTwoMoviesForRowAdapter = TwoMoviesForRowAdapter(it.results)
+                    recyclerViewTwoMoviesForRow.adapter = adapterTwoMoviesForRowAdapter
+                }
+            }
+        }
+
+
+
+
+
     }
 }

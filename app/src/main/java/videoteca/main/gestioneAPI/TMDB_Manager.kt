@@ -35,6 +35,14 @@ class TMDB_Manager {
         }
     }
 
+    fun getMovieDiscover(language: String, genreId: Int, page: Int,callback: (MovieResponse?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = getMovieDiscoverAsync(language, genreId, page)
+            Log.d(TAG, "response : $response")
+            callback(response)
+        }
+    }
+
     fun getMoviePopular(language: String, callback: (MovieResponse?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getMoviePopularAsync(language)
@@ -139,6 +147,70 @@ class TMDB_Manager {
             val responseBody = response.body?.string()
             val movieResponseRecommended = Gson().fromJson(responseBody, MovieResponseRecommended::class.java)
             movieResponseRecommended
+        } catch (e: Exception) {
+            Log.e(TAG, "Error fetching movies", e)
+            null
+        }
+    }
+
+
+    private suspend fun getMovieDiscoverAsync(language: String, genreId: Int, page:Int): MovieResponse? {
+        return try {
+            val client = OkHttpClient()
+
+            val request = Request.Builder()
+                .url("https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=${language}&page=${page}&sort_by=popularity.desc&with_genres=${genreId}")
+                .get()
+                .addHeader("accept", "application/json")
+                .addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5NDYxMGM1NmQ4Y2EwMTYxNWViNGM4YWQ4OGE1OWQ3OSIsInN1YiI6IjY2MWQ5ZGEwNTI4YjJlMDE2NDNlNDA3ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.7lBtujdrJbwjditULHEySQ3zrF80lSsQz8JKAwYos7U")
+                .build()
+
+            val response = client.newCall(request).execute()
+
+            if (response.isSuccessful) {
+                val responseBody = response.body?.string()
+                val jsonObject: JsonObject = gson.fromJson(responseBody, JsonObject::class.java)
+                val movieList = mutableListOf<Movie>()
+                var page: Int = 0;
+                page = jsonObject["page"].asInt
+                Log.d(TAG, "Json Element: page = $page")
+                val results = jsonObject["results"].asJsonArray
+                for (jsonElementMovie in results) {
+                    val jsonObjectMovie = jsonElementMovie.getAsJsonObject()
+                    val adult = jsonObjectMovie["adult"].asBoolean
+                    val backdrop_path = jsonObjectMovie["backdrop_path"].asString
+                    val genre_ids = jsonObjectMovie["genre_ids"].asJsonArray
+                    var gid = mutableListOf<Int>()
+                    for (genres in genre_ids) {
+                        gid.add(genres.asInt)
+                    }
+                    val id = jsonObjectMovie["id"].asInt
+                    val originalLanguage = jsonObjectMovie["original_language"].asString
+                    val originalTitle = jsonObjectMovie["original_title"].asString
+                    val overview = jsonObjectMovie["overview"].asString
+                    val popularity = jsonObjectMovie["popularity"].asDouble
+                    val posterPath = jsonObjectMovie["poster_path"].asString
+                    val releaseDate = jsonObjectMovie["release_date"].asString
+                    val title = jsonObjectMovie["title"].asString
+                    Log.d(TAG, "Json Element videoteca.main.gestioneAPI.Movie.Movie: title = $title")
+                    val video = jsonObjectMovie["video"].asBoolean
+                    val voteAverage = jsonObjectMovie["vote_average"].asDouble
+                    val voteCount = jsonObjectMovie["vote_count"].asInt
+
+                    val movie: Movie = Movie(
+                        adult, backdrop_path, gid, id, originalLanguage,
+                        originalTitle, overview, popularity, posterPath, releaseDate,
+                        title, video, voteAverage, voteCount
+                    )
+                    movieList.add(movie)
+
+                }
+                val totalPages = jsonObject["total_pages"].asInt
+                val totalResult = jsonObject["total_results"].asInt
+                MovieResponse(page, movieList, totalPages,totalResult)
+            } else {
+                null
+            }
         } catch (e: Exception) {
             Log.e(TAG, "Error fetching movies", e)
             null

@@ -67,7 +67,7 @@ class FilmAdapter(private val items: List<MovieResponse.Movie>) : RecyclerView.A
 
         init {
             textView = itemView.findViewById(R.id.tv_title)
-            pic = itemView.findViewById(R.id.iv_poster_2)
+            pic = itemView.findViewById(R.id.iv_poster)
         }
     }
 }

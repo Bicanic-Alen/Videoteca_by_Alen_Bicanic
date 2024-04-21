@@ -7,7 +7,7 @@
     android:layout_margin="6dp">
 
     <ImageView
-        android:id="@+id/iv_poster_2"
+        android:id="@+id/iv_poster"
         android:layout_width="150dp"
         android:layout_height="225dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -30,7 +30,7 @@
         android:textAlignment="center"
         android:textColor="?attr/colorPrimary"
         android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="@+id/iv_poster_2"
-        app:layout_constraintStart_toStartOf="@+id/iv_poster_2"
-        app:layout_constraintTop_toBottomOf="@+id/iv_poster_2" />
+        app:layout_constraintEnd_toEndOf="@+id/iv_poster"
+        app:layout_constraintStart_toStartOf="@+id/iv_poster"
+        app:layout_constraintTop_toBottomOf="@+id/iv_poster" />
 </androidx.constraintlayout.widget.ConstraintLayout>

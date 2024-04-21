@@ -14,6 +14,7 @@ realmGradlePlugin = "10.18.0"
 librarySync = "1.14.1"
 pluginCompiler = "1.14.1"
 firebaseDatabaseKtx = "20.3.1"
+gridlayout = "1.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -29,6 +30,7 @@ realm-gradle-plugin = { group = "io.realm", name = "realm-gradle-plugin", versio
 library-sync = { group = "io.realm.kotlin", name = "library-sync", version.ref = "librarySync" }
 plugin-compiler = { group = "io.realm.kotlin", name = "plugin-compiler", version.ref = "pluginCompiler" }
 firebase-database-ktx = { group = "com.google.firebase", name = "firebase-database-ktx", version.ref = "firebaseDatabaseKtx" }
+androidx-gridlayout = { group = "androidx.gridlayout", name = "gridlayout", version.ref = "gridlayout" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
