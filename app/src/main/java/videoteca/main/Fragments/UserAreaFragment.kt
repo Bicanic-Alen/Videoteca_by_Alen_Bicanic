@@ -9,8 +9,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import videoteca.main.LoginActivity
 import videoteca.main.R
+import videoteca.main.SettingsActivity
 import videoteca.main.SharedInfo
-import videoteca.main.gestioneAPI.AuthService
+import videoteca.main.api.AuthService
 import java.util.Calendar
 
 
@@ -46,7 +47,8 @@ class UserAreaFragment : Fragment() {
 
         val tvSettings = view.findViewById<TextView>(R.id.tv_settings_ua)
         tvSettings.setOnClickListener {
-            changeFragment(SettingsFragment())
+            val intent = Intent(context, SettingsActivity::class.java)
+            context?.startActivity(intent)
         }
 
         val tvRented = view.findViewById<TextView>(R.id.tv_rented)

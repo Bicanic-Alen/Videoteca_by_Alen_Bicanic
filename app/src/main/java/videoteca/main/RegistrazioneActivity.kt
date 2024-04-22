@@ -11,8 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
-import videoteca.main.gestioneAPI.AuthService
-import videoteca.main.gestioneAPI.DatabaseManager
+import videoteca.main.api.AuthService
+import videoteca.main.api.DatabaseManager
 import videoteca.main.Domain.UserDB
 import java.text.SimpleDateFormat
 import java.util.*

@@ -16,7 +16,7 @@
 
     <!-- Layout per il secondo film -->
     <Space
-        android:layout_width="0dp"
+        android:layout_width="8dp"
         android:layout_height="wrap_content"
         android:layout_weight="1" />
 

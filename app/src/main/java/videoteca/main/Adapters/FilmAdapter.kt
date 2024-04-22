@@ -20,7 +20,7 @@ import videoteca.main.MovieDetailsActivity
 import videoteca.main.R
 import videoteca.main.Domain.Movie.MovieResponse
 import videoteca.main.Domain.Movie.PosterSize
-import videoteca.main.gestioneAPI.TMDB_ImageManager
+import videoteca.main.api.TMDB_ImageManager
 
 @GlideModule
 class FilmAdapter(private val items: List<MovieResponse.Movie>) : RecyclerView.Adapter<FilmAdapter.ViewHolder>() {

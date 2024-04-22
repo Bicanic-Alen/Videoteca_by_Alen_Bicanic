@@ -22,7 +22,7 @@ import videoteca.main.Domain.GenreList
 import videoteca.main.Domain.SliderItems
 import videoteca.main.R
 import videoteca.main.Domain.Movie.MovieResponse
-import videoteca.main.gestioneAPI.TMDB_Manager
+import videoteca.main.api.TMDB_Manager
 import java.util.Locale
 import kotlin.math.abs
 

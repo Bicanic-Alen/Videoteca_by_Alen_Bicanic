@@ -1,4 +1,4 @@
-package videoteca.main.gestioneAPI
+package videoteca.main.api
 
 import videoteca.main.Domain.Movie.ImageSize
 import videoteca.main.Domain.Movie.LogoSize

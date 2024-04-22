@@ -20,7 +20,7 @@ data class MovieDetails(
     @SerializedName("production_companies") val productionCompanies: List<ProductionCompany> = emptyList(),
     @SerializedName("production_countries") val productionCountries: List<ProductionCountry> = emptyList(),
     @SerializedName("release_date") val releaseDate: String = "",
-    @SerializedName("revenue") val revenue: Int = 0,
+    @SerializedName("revenue") val revenue: Long = 0,
     @SerializedName("runtime") val runtime: Int = 0,
     @SerializedName("spoken_languages") val spokenLanguages: List<SpokenLanguage> = emptyList(),
     @SerializedName("status") val status: String = "",

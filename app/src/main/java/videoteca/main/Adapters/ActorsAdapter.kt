@@ -1,8 +1,6 @@
 package videoteca.main.Adapters
 
 import android.content.Context
-import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,12 +12,10 @@ import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
-import videoteca.main.MovieDetailsActivity
 import videoteca.main.R
 import videoteca.main.Domain.Movie.CreditsMovie
-import videoteca.main.Domain.Movie.PosterSize
 import videoteca.main.Domain.Movie.ProfileSize
-import videoteca.main.gestioneAPI.TMDB_ImageManager
+import videoteca.main.api.TMDB_ImageManager
 
 
 @GlideModule

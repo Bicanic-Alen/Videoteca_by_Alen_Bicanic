@@ -2,6 +2,7 @@ package videoteca.main
 
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
+import android.nfc.Tag
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -26,8 +27,8 @@ import videoteca.main.Adapters.GenreAdapterMovieDetails
 
 import videoteca.main.Domain.Movie.LogoSize
 import videoteca.main.Domain.Movie.PosterSize
-import videoteca.main.gestioneAPI.TMDB_ImageManager
-import videoteca.main.gestioneAPI.TMDB_Manager
+import videoteca.main.api.TMDB_ImageManager
+import videoteca.main.api.TMDB_Manager
 import java.util.Locale
 import kotlin.properties.Delegates
 
@@ -62,6 +63,8 @@ class MovieDetailsActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_movie_details)
         idMovie = intent.getIntExtra("id", 0)
+        
+        Log.d(TAG, "id movie: $idMovie")
 
         initView()
 

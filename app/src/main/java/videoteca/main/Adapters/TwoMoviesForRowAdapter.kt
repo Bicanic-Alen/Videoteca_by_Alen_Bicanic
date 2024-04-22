@@ -4,7 +4,6 @@ package videoteca.main.Adapters
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +20,7 @@ import videoteca.main.MovieDetailsActivity
 import videoteca.main.R
 import videoteca.main.Domain.Movie.MovieResponse
 import videoteca.main.Domain.Movie.PosterSize
-import videoteca.main.gestioneAPI.TMDB_ImageManager
+import videoteca.main.api.TMDB_ImageManager
 
 @GlideModule
 class TwoMoviesForRowAdapter(private val items: List<MovieResponse.Movie>) : RecyclerView.Adapter<TwoMoviesForRowAdapter.ViewHolder>() {

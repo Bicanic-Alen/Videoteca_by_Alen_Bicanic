@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.annotation.GlideModule
@@ -18,10 +17,9 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import videoteca.main.MovieDetailsActivity
 import videoteca.main.R
-import videoteca.main.Domain.Movie.MovieResponse
 import videoteca.main.Domain.Movie.MovieResponseRecommended
 import videoteca.main.Domain.Movie.PosterSize
-import videoteca.main.gestioneAPI.TMDB_ImageManager
+import videoteca.main.api.TMDB_ImageManager
 
 @GlideModule
 class FilmRaccommendedAdapter(private val items: List<MovieResponseRecommended.MovieRaccomended>) : RecyclerView.Adapter<FilmRaccommendedAdapter.ViewHolder>() {

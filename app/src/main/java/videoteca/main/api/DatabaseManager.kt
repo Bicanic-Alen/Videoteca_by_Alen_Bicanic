@@ -1,4 +1,4 @@
-package videoteca.main.gestioneAPI
+package videoteca.main.api
 
 import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot

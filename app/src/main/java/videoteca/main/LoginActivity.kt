@@ -13,8 +13,8 @@ import android.util.Log
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import videoteca.main.gestioneAPI.AuthService
-import videoteca.main.gestioneAPI.DatabaseManager
+import videoteca.main.api.AuthService
+import videoteca.main.api.DatabaseManager
 
 
 class LoginActivity : AppCompatActivity() {
