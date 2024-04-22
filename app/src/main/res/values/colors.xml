@@ -2,6 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="background_dark">#141218</color>
+    <color name="background_white">#FEF7FF</color>
     <color name="gray_900">#212121</color>
     <color name="gray_800">#424242</color>
     <color name="gray_400">#BDBDBD</color>
@@ -9,6 +10,7 @@
     <color name="gray_200">#EEEEEE</color>
     <color name="gray_100">#F5F5F5</color>
     <color name="white">#FFFFFFFF</color>
+
 
     <color name="red_900">#B71C1C</color>
     <color name="red_A700">#D50000</color>

@@ -46,6 +46,9 @@ class HomeFragment : Fragment() {
     private lateinit var loadingBar3: ProgressBar
     private lateinit var loadingBar4:ProgressBar
 
+    private val currentLocale: Locale = Locale.getDefault()
+    private val language:String = currentLocale.language
+    private val languageTag: String = currentLocale.toLanguageTag()  //Restituisce il tag della lingua
 
 
     override fun onCreateView(
@@ -93,9 +96,7 @@ class HomeFragment : Fragment() {
 
         var items: MovieResponse
 
-        val currentLocale: Locale = Locale.getDefault()
-        val language:String = currentLocale.language
-        val languageTag: String = currentLocale.toLanguageTag()  //Restituisce il tag della lingua
+
 
         Log.d("HomeFragment","languageTag = $languageTag")
 
@@ -168,36 +169,33 @@ class HomeFragment : Fragment() {
     }
 
     private fun banners(){
-        val sliderItems = mutableListOf<SliderItems>()
+        tmdbApiManager.getMovieDiscover(languageTag){ movieResponse ->
+            activity?.runOnUiThread {
+                if(movieResponse!=null){
+                    viewPager2.setAdapter(SliderAdapters(movieResponse, viewPager2));
+                    viewPager2.setClipToPadding(false)
+                    viewPager2.setClipChildren(false)
+                    viewPager2.setOffscreenPageLimit(3)
+                    viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_ALWAYS);
 
+                    val compositePageTransformer:CompositePageTransformer = CompositePageTransformer()
+                    compositePageTransformer.addTransformer(MarginPageTransformer(40))
+                    compositePageTransformer.addTransformer { page, position ->
+                        val r = (1 - abs(position.toDouble())).toFloat()
+                        page.scaleY = 0.85f + r * 0.15f
+                    }
 
-
-        sliderItems.add(SliderItems(R.drawable.img1))
-        sliderItems.add(SliderItems(R.drawable.img2))
-        sliderItems.add(SliderItems(R.drawable.img3))
-        sliderItems.add(SliderItems(R.drawable.img4))
-
-        viewPager2.setAdapter(SliderAdapters(sliderItems, viewPager2));
-        viewPager2.setClipToPadding(false)
-        viewPager2.setClipChildren(false)
-        viewPager2.setOffscreenPageLimit(4)
-        viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_ALWAYS);
-
-        val compositePageTransformer:CompositePageTransformer = CompositePageTransformer()
-        compositePageTransformer.addTransformer(MarginPageTransformer(40))
-        compositePageTransformer.addTransformer { page, position ->
-            val r = (1 - abs(position.toDouble())).toFloat()
-            page.scaleY = 0.85f + r * 0.15f
-        }
-
-        viewPager2.setPageTransformer(compositePageTransformer)
-        viewPager2.setCurrentItem(1)
-        viewPager2.registerOnPageChangeCallback(object : OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                sliderHandler.removeCallbacks(sliderRunnable)
+                    viewPager2.setPageTransformer(compositePageTransformer)
+                    viewPager2.setCurrentItem(1)
+                    viewPager2.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+                        override fun onPageSelected(position: Int) {
+                            super.onPageSelected(position)
+                            sliderHandler.removeCallbacks(sliderRunnable)
+                        }
+                    })
+                }
             }
-        })
+        }
     }
 
     private val sliderRunnable = java.lang.Runnable { viewPager2.setCurrentItem(viewPager2.getCurrentItem() + 1) }

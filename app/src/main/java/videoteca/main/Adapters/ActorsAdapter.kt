@@ -33,7 +33,7 @@ class ActorsAdapter (private val items: List<CreditsMovie.Cast>): RecyclerView.A
         holder.tvCharacterName.text = items.get(position).character
         val requestOptions = RequestOptions()
             .placeholder(R.drawable.ic_person_notfound) // Imposta l'immagine predefinita
-            .transform(CenterCrop(), RoundedCorners(30)) // Trasformazioni desiderate
+            .transform(CenterCrop(), RoundedCorners(30))
 
         val profilePath = items[position].profilePath
         val imageUrl = profilePath?.let { TMDB_ImageManager().buildImageUrl(ProfileSize.W185, it) }

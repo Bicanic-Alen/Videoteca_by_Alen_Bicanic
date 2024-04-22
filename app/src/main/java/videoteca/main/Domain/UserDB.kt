@@ -1,18 +1,20 @@
 package videoteca.main.Domain
 
 import com.google.firebase.Timestamp
+import com.google.gson.annotations.SerializedName
 
 data class UserDB(
-    var id: String = "",
-    var name: String = "",
-    var surname: String = "",
-    var birthDate: Timestamp? = null,
-    var email: String = "",
-    var favGenres: List<String> = emptyList(),
-    var rentedMovies: List<String> = emptyList(),
-    var reservedMovies: List<String> = emptyList()
+
+    @SerializedName("name") var name: String = "",
+    @SerializedName("surname") var surname: String = "",
+    @SerializedName("birthDate") var birthDate: Timestamp? = null,
+    @SerializedName("email") var email: String = "",
+    @SerializedName("favGenres") var favGenres: List<String> = emptyList(),
+    @SerializedName("favMovies") var favMovies: List<Int> = emptyList(),
+    @SerializedName("rentedMovies") var rentedMovies: List<String> = emptyList()
+
 ) {
-    constructor() : this("", "", "", null, "", emptyList(), emptyList(), emptyList())
+    constructor() : this("", "", null, "", emptyList(), emptyList(), emptyList())
 }
 
 

@@ -33,4 +33,6 @@
     <string name="recommended_films">Recommended movies</string>
     <string name="genres">Genres</string>
     <string name="this_content_is_currently_not_available_for_rental">This content is currently not available for rental</string>
+    <string name="movie_removed_from_favorites">Movie removed from favorites</string>
+    <string name="movie_added_to_favorites">Movie added to favorites</string>
 </resources>

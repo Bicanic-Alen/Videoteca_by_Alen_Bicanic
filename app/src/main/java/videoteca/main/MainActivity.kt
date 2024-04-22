@@ -21,6 +21,19 @@ import videoteca.main.Fragments.WatchlistFragment
         setContentView(R.layout.activity_main)
         checkCurrentUser()
 
+        val toolbarMain = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarMain)
+        toolbarMain.setOnMenuItemClickListener{ topMenuItem ->
+            when(topMenuItem.itemId){
+                R.id.search ->{
+                    val intent = Intent(this, SearchActivity::class.java)
+                    this.startActivity(intent)
+                    true
+                }
+                else -> false
+            }
+
+        }
+
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNavigationView.setOnItemSelectedListener { menuItem ->

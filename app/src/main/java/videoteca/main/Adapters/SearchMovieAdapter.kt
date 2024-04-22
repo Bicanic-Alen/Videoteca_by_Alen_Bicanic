@@ -18,45 +18,42 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import videoteca.main.MovieDetailsActivity
 import videoteca.main.R
-import videoteca.main.Domain.Movie.MovieResponseRecommended
+import videoteca.main.Domain.Movie.MovieResponse
 import videoteca.main.Domain.Movie.PosterSize
 import videoteca.main.api.TMDB_ImageManager
 
 @GlideModule
-class FilmRaccommendedAdapter(private val items: List<MovieResponseRecommended.MovieRaccomended>) : RecyclerView.Adapter<FilmRaccommendedAdapter.ViewHolder>() {
+class SearchMovieAdapter(private val items: List<MovieResponse.Movie>) : RecyclerView.Adapter<SearchMovieAdapter.ViewHolder>() {
 
     private var context: Context? = null
-    private val TAG = "FilmAdapterRecommended"
+    private val TAG = "FilmAdapter"
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
-        val inflate = LayoutInflater.from(parent.context).inflate(R.layout.viewholder_recommendedfilm, parent, false)
+        val inflate = LayoutInflater.from(parent.context).inflate(R.layout.viewholder_searchitem, parent, false)
         return ViewHolder(inflate)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
         holder.tvTitle.text = items[position].title
-
+        var year:String = ""
+        if(items[position].releaseDate!=""){
+            year = items[position].releaseDate.substring(0, 4)
+        }
+        holder.tvYear.text = year
         var requestOptions = RequestOptions()
-        val posterPath =
-            items[position].posterPath?.let {
-                TMDB_ImageManager().buildImageUrl(
-                    PosterSize.W342,
-                    it
-                )
-            }
+        val posterPath = TMDB_ImageManager().buildImageUrl(PosterSize.W342, items[position].posterPath)
         Log.d(TAG, "poster path = $posterPath")
+
+
 
         requestOptions = requestOptions
             .placeholder(R.drawable.ic_movie_default)
             .transform(CenterCrop(), RoundedCorners(30))
-
-
         Glide.with(context!!)
             .load(posterPath)
             .apply(requestOptions)
-            .into(holder.pic)
+            .into(holder.poster)
 
 
         holder.itemView.setOnClickListener { v: View? ->
@@ -75,10 +72,13 @@ class FilmRaccommendedAdapter(private val items: List<MovieResponseRecommended.M
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var tvTitle: TextView
-        var pic: ImageView
+        var tvYear: TextView
+        var poster: ImageView
+
         init {
-            tvTitle = itemView.findViewById(R.id.tv_title_rec)
-            pic = itemView.findViewById(R.id.iv_poster_recommended)
+            tvTitle = itemView.findViewById(R.id.tv_title_search)
+            tvYear = itemView.findViewById(R.id.tv_year_search)
+            poster = itemView.findViewById(R.id.iv_poster_search)
         }
     }
 }

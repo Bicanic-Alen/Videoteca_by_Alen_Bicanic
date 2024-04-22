@@ -58,6 +58,8 @@ class TMDB_Manager {
             callback(response)
         }
     }
+
+
     fun getMovieUpcomming(language: String, callback: (MovieResponse?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getMovieUpcommingAsync(language)
@@ -103,6 +105,36 @@ class TMDB_Manager {
             val response = getGenresAsync(language)
             Log.d(TAG, "response : $response")
             callback(response)
+        }
+    }
+
+    fun searchMovie(query:String, language: String, callback: (MovieResponse?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = searchMovieAsync(query,language)
+            Log.d(TAG, "response : $response")
+            callback(response)
+        }
+    }
+
+
+    private fun searchMovieAsync(query: String, language: String): MovieResponse? {
+        return try {
+            val client = OkHttpClient()
+
+            val request = Request.Builder()
+                .url("https://api.themoviedb.org/3/search/movie?query=${query}&include_adult=false&language=${language}&page=1")
+                .get()
+                .addHeader("accept", "application/json")
+                .addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5NDYxMGM1NmQ4Y2EwMTYxNWViNGM4YWQ4OGE1OWQ3OSIsInN1YiI6IjY2MWQ5ZGEwNTI4YjJlMDE2NDNlNDA3ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.7lBtujdrJbwjditULHEySQ3zrF80lSsQz8JKAwYos7U")
+                .build()
+
+            val response = client.newCall(request).execute()
+            val responseBody = response.body?.string()
+            val movieResponse = Gson().fromJson(responseBody, MovieResponse::class.java)
+            movieResponse
+        }catch (e: Exception){
+            Log.e(TAG, "error fetching search",e)
+            null
         }
     }
 

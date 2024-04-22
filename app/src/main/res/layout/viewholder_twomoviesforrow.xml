@@ -9,7 +9,7 @@
 
     <!-- Layout per il primo film -->
     <include
-        android:id="@+id/lyt2"
+        android:id="@+id/lyt1"
         layout="@layout/viewholder_film" />
 
     <!-- Spazio vuoto per separare i film -->
@@ -21,7 +21,7 @@
         android:layout_weight="1" />
 
     <include
-        android:id="@+id/lyt1"
+        android:id="@+id/lyt2"
         layout="@layout/viewholder_film" />
 
 </LinearLayout>

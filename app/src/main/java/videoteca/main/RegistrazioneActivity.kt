@@ -63,8 +63,8 @@ class RegistrazioneActivity : AppCompatActivity() {
                             birthDate = dateToTimestamp(etvDate),
                             email = etvEmail,
                             favGenres = emptyList(),
+                            favMovies = emptyList(),
                             rentedMovies = emptyList(),
-                            reservedMovies = emptyList()
                         )
                         val db = DatabaseManager()
                         db.addUser(idu, user){success, error ->

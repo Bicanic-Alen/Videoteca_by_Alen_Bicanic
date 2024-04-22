@@ -2,13 +2,13 @@ package videoteca.main
 
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
-import android.nfc.Tag
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -27,6 +27,8 @@ import videoteca.main.Adapters.GenreAdapterMovieDetails
 
 import videoteca.main.Domain.Movie.LogoSize
 import videoteca.main.Domain.Movie.PosterSize
+import videoteca.main.api.AuthService
+import videoteca.main.api.DatabaseManager
 import videoteca.main.api.TMDB_ImageManager
 import videoteca.main.api.TMDB_Manager
 import java.util.Locale
@@ -40,6 +42,8 @@ class MovieDetailsActivity : AppCompatActivity() {
     private var idMovie by Delegates.notNull<Int>()
     private var TAG = "MovieDetailsActivity"
     private val currentLocale: Locale = Locale.getDefault()
+    private val db = DatabaseManager()
+    private val utenteId = AuthService.getCurrentUser()?.uid
 
     private lateinit var tvTitle:TextView
     private lateinit var backdropMovie: ImageView
@@ -99,7 +103,50 @@ class MovieDetailsActivity : AppCompatActivity() {
         recyclerViewGenres.adapter = adapterGenres
 
 
+
+
+        tvLike.setOnClickListener{view ->
+            if (utenteId != null) {
+                db.getFavMovies(utenteId){
+                   val isFavorite = idMovie in it
+                    Log.d(TAG, "il è gia presente? $isFavorite")
+                    if(isFavorite){
+                        AuthService.getCurrentUser()?.let { user ->
+                            db.removeFavMovies(user.uid, idMovie)
+                        }
+                        this.runOnUiThread{
+                            tvLike.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                                R.drawable.ic_favorite_border,
+                                0,
+                                0,
+                                0
+                            )
+                            showToast(getString(R.string.movie_removed_from_favorites))
+                        }
+
+                    }else{
+                        AuthService.getCurrentUser()?.let { user ->
+                            db.addFavMovies(user.uid, idMovie)
+                        }
+                        this.runOnUiThread {
+                            tvLike.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                                R.drawable.ic_favorite,
+                                0,
+                                0,
+                                0
+                            )
+                            showToast(getString(R.string.movie_added_to_favorites))
+                        }
+
+                    }
+                }
+            }
+
+        }
+
+
         tmdbManager.getMovieDetails(idMovie, languageTag) { movieDetails ->
+
             this.runOnUiThread {
                 if (movieDetails != null) {
 
@@ -107,14 +154,17 @@ class MovieDetailsActivity : AppCompatActivity() {
                     recyclerViewGenres.adapter = adapterGenres
 
                     //estrago le informazioni per il logo del film
-                    var logoPath:String = ""
+                    var logoPath: String = ""
                     tmdbManager.getMovieImage(idMovie, language) { imageResponse ->
                         this.runOnUiThread { //entro del thread pricipale
                             if (imageResponse != null) {
 
-                                if(imageResponse.logos.isNotEmpty()){
-                                    logoPath = tmdbImagemanager.buildImageUrl(LogoSize.W500, imageResponse.logos[0].filePath)
-                                    Log.d(TAG,"logo full path $logoPath")
+                                if (imageResponse.logos.isNotEmpty()) {
+                                    logoPath = tmdbImagemanager.buildImageUrl(
+                                        LogoSize.W500,
+                                        imageResponse.logos[0].filePath
+                                    )
+                                    Log.d(TAG, "logo full path $logoPath")
                                     Glide.with(this)
                                         .load(logoPath)
                                         .into(logoTitleMovie)
@@ -125,12 +175,19 @@ class MovieDetailsActivity : AppCompatActivity() {
                                                 for (l in it.logos) {
                                                     Log.d(TAG, "sono nel for: ${l.filePath}")
                                                     val filePath = l.filePath
-                                                    if (filePath.endsWith(".png")||filePath.endsWith(".jpg")) {
-                                                        Log.d(TAG, "sono nel if del for: ${l.filePath}")
+                                                    if (filePath.endsWith(".png") || filePath.endsWith(
+                                                            ".jpg"
+                                                        )
+                                                    ) {
+                                                        Log.d(
+                                                            TAG,
+                                                            "sono nel if del for: ${l.filePath}"
+                                                        )
                                                         // Se il percorso non termina con ".svg" ma termina con ".png" o ".jpg"
                                                         logoPath = tmdbImagemanager.buildImageUrl(
-                                                            LogoSize.W500, filePath)
-                                                        Log.d(TAG,"logo full path $logoPath")
+                                                            LogoSize.W500, filePath
+                                                        )
+                                                        Log.d(TAG, "logo full path $logoPath")
                                                         Glide.with(this)
                                                             .load(logoPath)
                                                             .into(logoTitleMovie)
@@ -139,14 +196,13 @@ class MovieDetailsActivity : AppCompatActivity() {
                                                 }
 
 
-                                            }
-                                            else{ //altrimenti si setta il titolo con una textview
-                                                if(movieDetails.title!=""){
+                                            } else { //altrimenti si setta il titolo con una textview
+                                                if (movieDetails.title != "") {
                                                     tvTitle.text = movieDetails.originalTitle
-                                                    tvTitle.visibility= View.VISIBLE
-                                                }else{
+                                                    tvTitle.visibility = View.VISIBLE
+                                                } else {
                                                     tvTitle.text = movieDetails.title
-                                                    tvTitle.visibility= View.VISIBLE
+                                                    tvTitle.visibility = View.VISIBLE
                                                 }
                                             }
                                         }
@@ -161,15 +217,25 @@ class MovieDetailsActivity : AppCompatActivity() {
                     }
 
 
-
                     //recupero backdrop per imagine di sfondo
                     Glide.with(this)
-                        .load(tmdbImagemanager.buildImageUrl(PosterSize.W780, movieDetails.backdropPath))
-                        .transition(DrawableTransitionOptions.withCrossFade()) // Opzionale: animazione del caricamento
+                        .load(
+                            tmdbImagemanager.buildImageUrl(
+                                PosterSize.W780,
+                                movieDetails.backdropPath
+                            )
+                        )
+                        .transition(DrawableTransitionOptions.withCrossFade())
                         .into(object : CustomTarget<Drawable>() {
-                            override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                            override fun onResourceReady(
+                                resource: Drawable,
+                                transition: Transition<in Drawable>?
+                            ) {
                                 // Sovrappone il Drawable per la sfocatura all'immagine
-                                val shadowDrawable = ContextCompat.getDrawable(this@MovieDetailsActivity, R.drawable.gradient_shadow)
+                                val shadowDrawable = ContextCompat.getDrawable(
+                                    this@MovieDetailsActivity,
+                                    R.drawable.gradient_shadow
+                                )
                                 val layerDrawable = LayerDrawable(arrayOf(resource, shadowDrawable))
                                 backdropMovie.setImageDrawable(layerDrawable)
                             }
@@ -190,30 +256,32 @@ class MovieDetailsActivity : AppCompatActivity() {
                         )
                         .transform(CenterCrop(), RoundedCorners(30))
                         .into(posterMovie)
-                    Log.d(TAG, tmdbImagemanager.buildImageUrl(
-                        PosterSize.W500,
-                        movieDetails.posterPath
-                    ))
+                    Log.d(
+                        TAG, tmdbImagemanager.buildImageUrl(
+                            PosterSize.W500,
+                            movieDetails.posterPath
+                        )
+                    )
 
                     tvDurationMovie.text = "${movieDetails.runtime} min"
                     tvRatingMovie.text = limitToOneDecimalPlace(movieDetails.voteAverage)
-                    if(movieDetails.overview == ""){
-                            tmdbManager.getMovieDetails(idMovie,"en-US"){ it->
-                                this.runOnUiThread {
-                                    if (it!=null){
-                                        tvPlot.text= it.overview
-                                    }
+                    if (movieDetails.overview == "") {
+                        tmdbManager.getMovieDetails(idMovie, "en-US") { it ->
+                            this.runOnUiThread {
+                                if (it != null) {
+                                    tvPlot.text = it.overview
                                 }
                             }
+                        }
 
-                    }else{
-                        tvPlot.text= movieDetails.overview
+                    } else {
+                        tvPlot.text = movieDetails.overview
                     }
 
 
-                    tmdbManager.getMovieCredits(idMovie, languageTag){ creditsMovie ->
-                        this.runOnUiThread{
-                            if (creditsMovie!=null){
+                    tmdbManager.getMovieCredits(idMovie, languageTag) { creditsMovie ->
+                        this.runOnUiThread {
+                            if (creditsMovie != null) {
                                 Log.d(TAG, creditsMovie.cast.get(0).name)
 
                                 adapterActors = ActorsAdapter(creditsMovie.cast)
@@ -221,7 +289,7 @@ class MovieDetailsActivity : AppCompatActivity() {
                                 recyclerViewActors.adapter = adapterActors
                                 Log.d(TAG, "success fetch data creditMovies")
 
-                            }else{
+                            } else {
                                 Log.d(TAG, "error fetch data creditMovies")
                             }
                         }
@@ -229,16 +297,24 @@ class MovieDetailsActivity : AppCompatActivity() {
                     }
 
 
-                    tmdbManager.getMovieRecommendations(idMovie, languageTag){ it ->
-                        this.runOnUiThread{
-                            if(it!=null){
+                    tmdbManager.getMovieRecommendations(idMovie, languageTag) { it ->
+                        this.runOnUiThread {
+                            if (it != null) {
                                 Log.d(TAG, it.toString())
-
                                 adapterRecommended = FilmRaccommendedAdapter(it.results)
                                 Log.d(TAG, "ho creato l'adapter")
                                 recyclerViewRecommendations.adapter = adapterRecommended
                                 Log.d(TAG, "success fetch data recommended movie")
-                            }else{
+                                if (it.results.isEmpty()) {
+                                    Log.d(TAG, "empty fetch data recommended movie")
+                                    val tvRaccommended =
+                                        findViewById<TextView>(R.id.tv_raccommended)
+                                    tvRaccommended.visibility = View.GONE
+                                    recyclerViewRecommendations.visibility = View.GONE
+                                }
+
+
+                            } else {
                                 val tvRaccommended = findViewById<TextView>(R.id.tv_raccommended)
                                 tvRaccommended.visibility = View.GONE
                                 recyclerViewRecommendations.visibility = View.GONE
@@ -246,9 +322,10 @@ class MovieDetailsActivity : AppCompatActivity() {
                             }
                         }
                     }
+
+
                 }
             }
-
         }
 
 
@@ -263,12 +340,25 @@ class MovieDetailsActivity : AppCompatActivity() {
         tvDurationMovie = findViewById<TextView>(R.id.tv_movie_duration_details)
         tvPlot = findViewById<TextView>(R.id.tv_summary_content_details)
         tvLike = findViewById<TextView>(R.id.tv_like_details)
+
+        if (utenteId != null) {
+            db.getFavMovies(utenteId){
+                val isFav = idMovie in it
+                if(isFav){
+                    runOnUiThread {
+                        tvLike.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                            R.drawable.ic_favorite,
+                            0,
+                            0,
+                            0
+                        )
+                    }
+                }
+            }
+        }
+
+
         btnRent = findViewById<Button>(R.id.btn_rent)
-
-
-
-
-
         recyclerViewGenres = findViewById<RecyclerView>(R.id.recyclerViewGenres)
         recyclerViewGenres.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -278,4 +368,10 @@ class MovieDetailsActivity : AppCompatActivity() {
         // Utilizza String.format con il modello "%.1f" per formattare il double con una cifra decimale
         return String.format("%.1f", number)
     }
+
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
 }

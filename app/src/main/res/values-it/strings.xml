@@ -34,4 +34,6 @@
     <string name="recommended_films">Film Consigliati</string>
     <string name="genres">Generi</string>
     <string name="this_content_is_currently_not_available_for_rental">Questo contenuto non è attualmente disponibile per il noleggio</string>
+    <string name="movie_removed_from_favorites">Film rimosso dai preferiti</string>
+    <string name="movie_added_to_favorites">Film aggiunto ai preferiti</string>
 </resources>

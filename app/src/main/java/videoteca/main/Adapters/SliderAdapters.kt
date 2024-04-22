@@ -1,6 +1,7 @@
 package videoteca.main.Adapters
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,19 +9,27 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
-import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
-import videoteca.main.Domain.SliderItems
+import videoteca.main.Domain.Movie.ImageSize
+import videoteca.main.Domain.Movie.MovieResponse
+import videoteca.main.MovieDetailsActivity
 import videoteca.main.R
+import videoteca.main.api.TMDB_ImageManager
 
-@GlideModule
-class SliderAdapters(sliderItems: MutableList<SliderItems>, viewPager2: ViewPager2) :
-    RecyclerView.Adapter<SliderAdapters.SliderViewHolder?>() {
-    private val sliderItems: List<SliderItems>
+class SliderAdapters(movieResponse: MovieResponse, viewPager2: ViewPager2) :
+    RecyclerView.Adapter<SliderAdapters.SliderViewHolder>() {
+
+    private val movieList: MutableList<MovieResponse.Movie>
     private val viewPager2: ViewPager2
     private var context: Context? = null
+
+    init {
+        movieList = movieResponse.results.toMutableList()
+        this.viewPager2 = viewPager2
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SliderViewHolder {
         context = parent.context
         return SliderViewHolder(
@@ -31,14 +40,25 @@ class SliderAdapters(sliderItems: MutableList<SliderItems>, viewPager2: ViewPage
     }
 
     override fun onBindViewHolder(holder: SliderViewHolder, position: Int) {
-        holder.setImage(sliderItems[position])
-        if (position == sliderItems.size - 2) {
+
+        holder.setImage(movieList[position].backdropPath)
+        if (position == movieList.size - 2) {
             viewPager2.post(runnable)
         }
+
+        holder.itemView.setOnClickListener {
+            val intent = Intent(
+                holder.itemView.context,
+                MovieDetailsActivity::class.java
+            )
+            intent.putExtra("id",movieList[position].id)
+            context!!.startActivity(intent)
+        }
+
     }
 
     override fun getItemCount(): Int {
-        return sliderItems.size
+        return movieList.size
     }
 
     inner class SliderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -48,20 +68,22 @@ class SliderAdapters(sliderItems: MutableList<SliderItems>, viewPager2: ViewPage
             imageView = itemView.findViewById(R.id.imageSlide)
         }
 
-        fun setImage(sliderItems: SliderItems) {
-            var requestOptions = RequestOptions()
-            requestOptions = requestOptions.transform(CenterCrop(), RoundedCorners(60))
-            Glide.with(context!!).load(sliderItems.getImage()).apply(requestOptions).into(imageView)
+        fun setImage(imageUrl: String) {
+
+            val imagepath = TMDB_ImageManager().buildImageUrl(ImageSize.W780,imageUrl)
+
+            val requestOptions = RequestOptions()
+                .transform(CenterCrop(), RoundedCorners(60))
+            Glide.with(context!!)
+                .load(imagepath)
+                .apply(requestOptions)
+                .into(imageView)
         }
     }
 
     private val runnable = Runnable {
-        sliderItems.addAll(sliderItems)
+        movieList.addAll(movieList)
         notifyDataSetChanged()
     }
 
-    init {
-        this.sliderItems = sliderItems
-        this.viewPager2 = viewPager2
-    }
 }
