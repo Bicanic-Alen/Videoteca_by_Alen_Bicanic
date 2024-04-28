@@ -19,20 +19,16 @@
         <item name="android:color">?attr/colorOnPrimary</item>
     </style>
 
-   <style name="toolbarBackgroundColor"><item name="background">@color/gray_200</item></style>
-    <style name="navbarBackgorundColor"><item name="background">@color/gray_200</item></style>
+    <style name="toolbarBackgroundColor">
+        <item name="background">@color/gray_200</item>
+    </style>
+
+    <style name="navbarBackgorundColor">
+        <item name="background">@color/gray_200</item>
+    </style>
 
 
     <style name="Theme.Videoteca" parent="Base.Theme.Videoteca" />
-
-
-
-
-
-    
-
-
-
 
 
 

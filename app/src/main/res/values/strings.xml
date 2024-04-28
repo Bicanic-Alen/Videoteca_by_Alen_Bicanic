@@ -35,4 +35,16 @@
     <string name="this_content_is_currently_not_available_for_rental">This content is currently not available for rental</string>
     <string name="movie_removed_from_favorites">Movie removed from favorites</string>
     <string name="movie_added_to_favorites">Movie added to favorites</string>
+    <string name="movie_removed_from_the_watchlist">Movie removed from the watchlist</string>
+    <string name="movie_added_to_the_watchlist">Movie added to the watchlist</string>
+    <string name="expires_on">"Expires on: "</string>
+    <string name="you_have_already_rented_this_movie">You have already rented this movie.</string>
+    <string name="euro_sim">€</string>
+    <string name="_00_00">00.00</string>
+    <string name="price">Price:</string>
+    <string name="confirm_purchase">Confirm purchase</string>
+    <string name="cancel">Cancel</string>
+    <string name="purchase">Purchase</string>
+    <string name="the_movie_will_be_available_in_your_rented_catalog_for_7_days_from_when_you_press_the_confirm_button">The movie will be available in your rented catalog for 7 days from when you press the confirm button!</string>
+    <string name="movie_rented_successfully_you_can_find_it_in_your_rented_movies_catalog">Movie rented successfully. You can find it in your rented movies catalog.</string>
 </resources>

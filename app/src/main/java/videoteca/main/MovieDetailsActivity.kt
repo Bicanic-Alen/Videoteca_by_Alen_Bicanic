@@ -1,5 +1,6 @@
 package videoteca.main
 
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
@@ -45,12 +46,14 @@ class MovieDetailsActivity : AppCompatActivity() {
     private val db = DatabaseManager()
     private val utenteId = AuthService.getCurrentUser()?.uid
 
+    private lateinit var tvNoDisp:TextView
     private lateinit var tvTitle:TextView
     private lateinit var backdropMovie: ImageView
     private lateinit var posterMovie: ImageView
     private lateinit var logoTitleMovie: ImageView
     private lateinit var tvRatingMovie: TextView
     private lateinit var tvDurationMovie: TextView
+    private lateinit var tvWatchlist: TextView
     private lateinit var tvPlot: TextView
     private lateinit var tvLike: TextView
     private lateinit var btnRent: Button
@@ -104,6 +107,24 @@ class MovieDetailsActivity : AppCompatActivity() {
 
 
 
+        db.getVidetecaItem(idMovie){
+             runOnUiThread{
+                 if(it!=null){
+                     Log.d(TAG, "contenuto doc id: ${it.id}, id movie: ${it.idMovie}, path: ${it.videoPath}")
+                     tvNoDisp.visibility = View.GONE
+                     btnRent.visibility = View.VISIBLE
+                 }
+             }
+        }
+
+
+        btnRent.setOnClickListener {
+                val intent = Intent(this, RentConfirmActivity::class.java)
+                intent.putExtra("idMovie", idMovie)
+                this.startActivity(intent)
+        }
+
+
 
         tvLike.setOnClickListener{view ->
             if (utenteId != null) {
@@ -145,11 +166,51 @@ class MovieDetailsActivity : AppCompatActivity() {
         }
 
 
+        tvWatchlist.setOnClickListener{view ->
+            if (utenteId != null) {
+                db.getWatchlist(utenteId){
+                    val isFavorite = idMovie in it
+                    Log.d(TAG, "il è gia presente? $isFavorite")
+                    if(isFavorite){
+                        AuthService.getCurrentUser()?.let { user ->
+                            db.removeFromWatchlist(user.uid, idMovie)
+                        }
+                        this.runOnUiThread{
+                            tvWatchlist.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                                R.drawable.ic_bookmark_border,
+                                0,
+                                0,
+                                0
+                            )
+                            showToast(getString(R.string.movie_removed_from_the_watchlist))
+                        }
+
+                    }else{
+                        AuthService.getCurrentUser()?.let { user ->
+                            db.addToWatchlist(user.uid, idMovie)
+                        }
+                        this.runOnUiThread {
+                            tvWatchlist.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                                R.drawable.ic_bookmark,
+                                0,
+                                0,
+                                0
+                            )
+                            showToast(getString(R.string.movie_added_to_the_watchlist))
+                        }
+
+                    }
+                }
+            }
+
+        }
+
+
+
         tmdbManager.getMovieDetails(idMovie, languageTag) { movieDetails ->
 
             this.runOnUiThread {
                 if (movieDetails != null) {
-
                     adapterGenres = GenreAdapterMovieDetails(movieDetails.genres)
                     recyclerViewGenres.adapter = adapterGenres
 
@@ -307,8 +368,7 @@ class MovieDetailsActivity : AppCompatActivity() {
                                 Log.d(TAG, "success fetch data recommended movie")
                                 if (it.results.isEmpty()) {
                                     Log.d(TAG, "empty fetch data recommended movie")
-                                    val tvRaccommended =
-                                        findViewById<TextView>(R.id.tv_raccommended)
+                                    val tvRaccommended = findViewById<TextView>(R.id.tv_raccommended)
                                     tvRaccommended.visibility = View.GONE
                                     recyclerViewRecommendations.visibility = View.GONE
                                 }
@@ -340,7 +400,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         tvDurationMovie = findViewById<TextView>(R.id.tv_movie_duration_details)
         tvPlot = findViewById<TextView>(R.id.tv_summary_content_details)
         tvLike = findViewById<TextView>(R.id.tv_like_details)
-
+        tvNoDisp = findViewById<TextView>(R.id.tv_contNoAv)
         if (utenteId != null) {
             db.getFavMovies(utenteId){
                 val isFav = idMovie in it
@@ -357,8 +417,51 @@ class MovieDetailsActivity : AppCompatActivity() {
             }
         }
 
+        tvWatchlist = findViewById(R.id.tv_whatchlist_details)
 
         btnRent = findViewById<Button>(R.id.btn_rent)
+
+        if (utenteId != null) {
+            db.getWatchlist(utenteId){
+                val isFav = idMovie in it
+                if(isFav){
+                    runOnUiThread {
+                        tvWatchlist.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                            R.drawable.ic_bookmark,
+                            0,
+                            0,
+                            0
+                        )
+                    }
+                }
+            }
+            db.getRentedMovies(utenteId){
+                var flag = false
+                for (item in it){
+                    if(item.id == idMovie){
+                        flag=true
+                        break
+                    }
+                }
+                if(flag){
+                    runOnUiThread {
+                        btnRent.text = getString(R.string.you_have_already_rented_this_movie)
+                        btnRent.setOnClickListener {
+                            val intent = Intent(this, MovieRentedActivity::class.java)
+                            this.startActivity(intent)
+                        }
+                    }
+                }
+
+
+            }
+        }
+
+
+
+
+
+
         recyclerViewGenres = findViewById<RecyclerView>(R.id.recyclerViewGenres)
         recyclerViewGenres.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)

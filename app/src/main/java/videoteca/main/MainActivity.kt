@@ -39,21 +39,30 @@ import videoteca.main.Fragments.WatchlistFragment
         bottomNavigationView.setOnItemSelectedListener { menuItem ->
             when(menuItem.itemId){
                 R.id.home -> {
+                    toolbarMain.title = getString(R.string.app_name)
+                    toolbarMain.menu.setGroupVisible(0,true)
                     replaceFragment(HomeFragment())
                     true
                 }
 
                 R.id.favorites -> {
+                    toolbarMain.title = getString(R.string.favorites)
+                    toolbarMain.menu.setGroupVisible(0,false)
                     replaceFragment(FavFragment())
                     true
+
                 }
 
                 R.id.watchlist -> {
+                    toolbarMain.title = getString(R.string.watchlist)
+                    toolbarMain.menu.setGroupVisible(0,false)
                     replaceFragment(WatchlistFragment())
                     true
                 }
 
                 R.id.user_area ->{
+                    toolbarMain.title = getString(R.string.user_area)
+                    toolbarMain.menu.setGroupVisible(0,false)
                     replaceFragment(UserAreaFragment())
                     true
                 }

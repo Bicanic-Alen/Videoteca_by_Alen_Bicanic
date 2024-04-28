@@ -36,4 +36,16 @@
     <string name="this_content_is_currently_not_available_for_rental">Questo contenuto non è attualmente disponibile per il noleggio</string>
     <string name="movie_removed_from_favorites">Film rimosso dai preferiti</string>
     <string name="movie_added_to_favorites">Film aggiunto ai preferiti</string>
+    <string name="movie_removed_from_the_watchlist">Film rimosso dalla watchlist</string>
+    <string name="movie_added_to_the_watchlist">Film aggiunto alla watchlist</string>
+    <string name="expires_on">Scade il:</string>
+    <string name="euro_sim">€</string>
+    <string name="you_have_already_rented_this_movie">Hai gia effetuato il noleggio</string>
+    <string name="_00_00">00.00</string>
+    <string name="price">Prezzo:</string>
+    <string name="confirm_purchase">Conferma l\'acquisto</string>
+    <string name="cancel">Annulla</string>
+    <string name="purchase">Acquista</string>
+    <string name="the_movie_will_be_available_in_your_rented_catalog_for_7_days_from_when_you_press_the_confirm_button">Il film è disponibile per 7 giorno dal momento in cui premi il tasto aquista</string>
+    <string name="movie_rented_successfully_you_can_find_it_in_your_rented_movies_catalog">Film noleggiato con sucesso. Lo trovi nel catalogo dei tuoi film noleggiati.</string>
 </resources>

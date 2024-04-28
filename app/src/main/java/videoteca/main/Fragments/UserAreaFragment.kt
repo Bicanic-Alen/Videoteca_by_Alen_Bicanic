@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import videoteca.main.LoginActivity
+import videoteca.main.MovieRentedActivity
 import videoteca.main.R
 import videoteca.main.SettingsActivity
 import videoteca.main.SharedInfo
@@ -52,7 +53,10 @@ class UserAreaFragment : Fragment() {
         }
 
         val tvRented = view.findViewById<TextView>(R.id.tv_rented)
-        //tvRented.setOnClickListener {  }
+        tvRented.setOnClickListener {
+            val intent = Intent(context, MovieRentedActivity::class.java)
+            context?.startActivity(intent)
+        }
 
 
 

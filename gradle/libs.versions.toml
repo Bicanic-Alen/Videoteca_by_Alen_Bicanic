@@ -15,6 +15,7 @@ librarySync = "1.14.1"
 pluginCompiler = "1.14.1"
 firebaseDatabaseKtx = "20.3.1"
 gridlayout = "1.0.0"
+firebaseStorageKtx = "20.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -31,6 +32,7 @@ library-sync = { group = "io.realm.kotlin", name = "library-sync", version.ref =
 plugin-compiler = { group = "io.realm.kotlin", name = "plugin-compiler", version.ref = "pluginCompiler" }
 firebase-database-ktx = { group = "com.google.firebase", name = "firebase-database-ktx", version.ref = "firebaseDatabaseKtx" }
 androidx-gridlayout = { group = "androidx.gridlayout", name = "gridlayout", version.ref = "gridlayout" }
+firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
