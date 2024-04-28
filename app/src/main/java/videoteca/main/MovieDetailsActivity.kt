@@ -110,7 +110,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         db.getVidetecaItem(idMovie){
              runOnUiThread{
                  if(it!=null){
-                     Log.d(TAG, "contenuto doc id: ${it.id}, id movie: ${it.idMovie}, path: ${it.videoPath}")
+                     Log.d(TAG, "contenuto, id movie: ${it.id_movie}, path: ${it.video_path}")
                      tvNoDisp.visibility = View.GONE
                      btnRent.visibility = View.VISIBLE
                  }

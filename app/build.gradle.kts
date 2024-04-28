@@ -68,7 +68,7 @@ dependencies {
     implementation ("androidx.media3:media3-exoplayer:1.3.1")
     implementation ("androidx.media3:media3-ui:1.3.1")
     implementation ("androidx.media3:media3-common:1.3.1")
-    //implementation ("org.videolan.android:libvlc-all:3.3.12")
-    //implementation ("org.videolan.android:libvlc-all:3.3.12@aar")
+    implementation ("org.videolan.android:libvlc-all:3.3.12")
+    implementation ("org.videolan.android:libvlc-all:3.3.12@aar")
 
 }
