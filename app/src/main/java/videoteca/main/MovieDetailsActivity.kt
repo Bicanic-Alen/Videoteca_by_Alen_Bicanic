@@ -1,6 +1,7 @@
 package videoteca.main
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
@@ -69,7 +70,17 @@ class MovieDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_movie_details)
+
+        val statusBarColor = if (isDarkTheme()) {
+            ContextCompat.getColor(this, R.color.black)
+        } else {
+            ContextCompat.getColor(this, R.color.gray_300)
+        }
+
+        window.statusBarColor = statusBarColor
+
         idMovie = intent.getIntExtra("id", 0)
+
         
         Log.d(TAG, "id movie: $idMovie")
 
@@ -472,6 +483,10 @@ class MovieDetailsActivity : AppCompatActivity() {
         return String.format("%.1f", number)
     }
 
+    private fun isDarkTheme(): Boolean {
+        val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        return mode == Configuration.UI_MODE_NIGHT_YES
+    }
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()

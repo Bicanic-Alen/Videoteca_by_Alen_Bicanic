@@ -74,6 +74,7 @@ class RentConfirmActivity : AppCompatActivity() {
         if (utenteId != null) {
             btnConfirm.setOnClickListener {
                 db.addRentedMovies(utenteId, idMovie)
+                SharedInfo(this).saveMovieTime(idMovie, 0L)
                 Toast.makeText(this,
                     getString(R.string.movie_rented_successfully_you_can_find_it_in_your_rented_movies_catalog), Toast.LENGTH_SHORT).show()
 

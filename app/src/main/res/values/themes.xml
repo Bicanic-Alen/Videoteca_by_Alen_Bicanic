@@ -20,11 +20,11 @@
     </style>
 
     <style name="toolbarBackgroundColor">
-        <item name="background">@color/gray_200</item>
+        <item name="background">@color/gray_300</item>
     </style>
 
     <style name="navbarBackgorundColor">
-        <item name="background">@color/gray_200</item>
+        <item name="background">@color/gray_300</item>
     </style>
 
 

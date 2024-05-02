@@ -1,35 +1,30 @@
 package videoteca.main
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
+import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.SeekBar
+import android.widget.Spinner
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.OptIn
+import androidx.appcompat.app.AlertDialog
 
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
+
 import androidx.lifecycle.lifecycleScope
-
-import androidx.media3.common.util.Log
-import androidx.media3.common.util.UnstableApi
-
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.videolan.libvlc.LibVLC
 import org.videolan.libvlc.Media
 import org.videolan.libvlc.MediaPlayer
-import org.videolan.libvlc.interfaces.IMedia.Slave.Type.Subtitle
 import org.videolan.libvlc.util.VLCVideoLayout
 import videoteca.main.Domain.Videoteca
 import videoteca.main.api.DatabaseManager
@@ -46,14 +41,18 @@ private const val ENABLE_SUBTITLES = true
 class MovieStreamActivity : AppCompatActivity() {
 
     //API
-    private val storage = Firebase.storage("gs://videoteca-ec23f.appspot.com")
     private val db = DatabaseManager()
     private var movieid by Delegates.notNull<Int>()
     private val tmdbManager = TMDB_Manager()
+
+
+    //DEVICE
     private val TAG = "MovieStreamActivity"
     private val currentLocale: Locale = Locale.getDefault()
+    val manufacturer = android.os.Build.MANUFACTURER
     private var areButtonsVisible = false
     private var savedPosition: Long = 0
+    private var isStartPositionSet = false
 
 
     //videoplayer
@@ -69,34 +68,54 @@ class MovieStreamActivity : AppCompatActivity() {
     private lateinit var tvTime : TextView
     private lateinit var tvTitle : TextView
     private lateinit var btnsPlayerLayout: View
-    private val hideButtonsDelay = 5000L // 5 secondi
-    private var hideButtonsJob: Job? = null
+    private lateinit var btnRestart: View
+    private lateinit var ivSubLang : ImageView
 
 
-    @OptIn(UnstableApi::class) @SuppressLint("ClickableViewAccessibility")
+
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_movie_stream)
 
+        Log.d(TAG,manufacturer.lowercase(Locale.ROOT))
+
         window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
 
-        val options = arrayListOf<String>(
+        var options = arrayListOf<String>()
+
+
+
+
+
+
+        movieid = intent.getIntExtra("id", 0)
+
+
+        Log.i(TAG, "posizione film: ${SharedInfo(this).getMovieTime(movieid)}")
+
+        savedPosition = SharedInfo(this).getMovieTime(movieid)
+
+
+        options = arrayListOf<String>(
             "--aout=opensles",
             "--audio-time-stretch",
             "--fullscreen",
-            "--no-video-title-show"
-
-
+            "--no-video-title-show",
         )
+
+
+
+
 
         libVLC = LibVLC(this, options)
 
         mediaPlayer =  MediaPlayer(libVLC)
 
-        movieid = intent.getIntExtra("id", 0)
+
 
         playerVideo = findViewById(R.id.player_video)
 
@@ -109,6 +128,8 @@ class MovieStreamActivity : AppCompatActivity() {
         ivBackRent = findViewById(R.id.iv_back_page)
         ivCast = findViewById(R.id.iv_cast)
         tvTime = findViewById(R.id.tv_movietime_remmaing)
+        btnRestart = findViewById(R.id.cl_restart)
+        ivSubLang = findViewById(R.id.iv_sub_lang)
         seekBarNavigation.progress = 0
 
         tmdbManager.getMovieDetails(movieid, currentLocale.toLanguageTag()){
@@ -127,16 +148,13 @@ class MovieStreamActivity : AppCompatActivity() {
                 MotionEvent.ACTION_DOWN -> {
                     if (areButtonsVisible) {
                         hideButtons()
-                        cancelHideButtonsTimer()
+
                         areButtonsVisible = false
                     } else {
                         showButtons()
-                        startHideButtonsTimer()
+
                         areButtonsVisible = true
                     }
-                }
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    cancelHideButtonsTimer()
                 }
             }
             true
@@ -152,6 +170,8 @@ class MovieStreamActivity : AppCompatActivity() {
                     Log.d(TAG, "full url del film $videoUrl")
                     val media = Media(libVLC, Uri.parse(videoUrl))
                     mediaPlayer.media = media
+                    savedPosition = SharedInfo(baseContext).getMovieTime(movieid)
+                    mediaPlayer.time=savedPosition
                     media.release()
                     mediaPlayer.attachViews(playerVideo, null, ENABLE_SUBTITLES, USE_TEXTURE_VIEW)
                     mediaPlayer.play()
@@ -169,6 +189,8 @@ class MovieStreamActivity : AppCompatActivity() {
                         override fun onStopTrackingTouch(seekBar: SeekBar?) {}
                     })
 
+                    mediaPlayer.time = savedPosition
+
                     mediaPlayer.setEventListener { event ->
                         when (event?.type) {
                             MediaPlayer.Event.Opening -> {
@@ -183,6 +205,12 @@ class MovieStreamActivity : AppCompatActivity() {
                                 //il video è in riproduzione
                                 Log.d(TAG, "Video pronto per la riproduzione")
 
+                                // Imposta la posizione del video solo se non è già stata impostata
+                                if (!isStartPositionSet) {
+                                    mediaPlayer.time = savedPosition
+                                    isStartPositionSet = true
+                                }
+
                                 val duration = mediaPlayer.length
                                 if (duration > 0) {
 
@@ -192,6 +220,40 @@ class MovieStreamActivity : AppCompatActivity() {
                                 } else {
                                     Log.e(TAG, "Durata del video non valida: $duration")
                                 }
+                                if (window.attributes.flags.and(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) == 0) {
+                                    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                }
+
+                                val audioTracks = mediaPlayer.audioTracks.toList()
+                                val subtitleTracks = mediaPlayer.spuTracks.toList()
+
+                                ivSubLang.setOnClickListener{
+                                    showAudioAndSubtitleSelectionDialog(
+                                        audioTracks,
+                                        subtitleTracks,
+                                        mediaPlayer,
+                                        { selectedAudio ->
+                                            // Imposta la traccia audio selezionata sul MediaPlayer
+                                            mediaPlayer.audioTracks.forEachIndexed { index, track ->
+                                                if (track.name == selectedAudio) {
+                                                    mediaPlayer.audioTrack = index
+                                                    return@forEachIndexed
+                                                }
+                                            }
+                                            Log.d(TAG,"Audio selezionato: $selectedAudio")
+                                        },
+                                        { selectedSubtitle ->
+                                            // Imposta i sottotitoli selezionati sul MediaPlayer
+                                            mediaPlayer.spuTracks.forEachIndexed { index, track ->
+                                                if (track.name == selectedSubtitle) {
+                                                    mediaPlayer.spuTrack = index
+                                                    return@forEachIndexed
+                                                }
+                                            }
+                                            Log.d(TAG,"Sottotitoli selezionati: $selectedSubtitle")
+                                        }
+                                    )
+                                }
                             }
                             MediaPlayer.Event.TimeChanged -> {
                                 seekBarNavigation.progress = mediaPlayer.time.toInt()
@@ -200,6 +262,12 @@ class MovieStreamActivity : AppCompatActivity() {
                             }
                             MediaPlayer.Event.EndReached->{
                                 onBackPressed()
+                            }
+
+                            MediaPlayer.Event.Paused ->{
+                                if (window.attributes.flags.and(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) != 0) {
+                                    window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                }
                             }
                         }
                     }
@@ -219,12 +287,17 @@ class MovieStreamActivity : AppCompatActivity() {
 
         ivPlaypause.setOnClickListener {
             if (mediaPlayer.isPlaying) {
+                //SharedInfo(this).saveMovieTime(movieid, mediaPlayer.time)
                 ivPlaypause.setImageResource(R.drawable.ic_play_circle_outline)
                 mediaPlayer.pause()
             } else {
                 ivPlaypause.setImageResource(R.drawable.baseline_pause_circle_outline_24)
                 mediaPlayer.play()
             }
+        }
+
+        btnRestart.setOnClickListener{
+            mediaPlayer.time = 0L
         }
 
 
@@ -243,19 +316,10 @@ class MovieStreamActivity : AppCompatActivity() {
             onBackPressed()
         }
 
+
+
     }
 
-    private fun cancelHideButtonsTimer() {
-        hideButtonsJob?.cancel()
-    }
-
-    private fun startHideButtonsTimer() {
-        cancelHideButtonsTimer()
-        hideButtonsJob = CoroutineScope(Dispatchers.Main).launch {
-            delay(hideButtonsDelay)
-            hideButtons()
-        }
-    }
 
     private fun showButtons() {
         btnsPlayerLayout.visibility = View.VISIBLE
@@ -283,20 +347,31 @@ class MovieStreamActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        Log.i(TAG, "sono in onPause")
         if (mediaPlayer.isPlaying) {
             savedPosition = mediaPlayer.time
+            SharedInfo(this).saveMovieTime(movieid,savedPosition)
+            Log.i(TAG, "il film è alla time position: $savedPosition")
             mediaPlayer.pause()
             ivPlaypause.setImageResource(R.drawable.ic_play_circle_outline)
         }
+        savedPosition = mediaPlayer.time
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (savedPosition > 0) {
-            mediaPlayer.time = savedPosition
-            mediaPlayer.play()
-            ivPlaypause.setImageResource(R.drawable.baseline_pause_circle_outline_24)
+    override fun onStop() {
+        super.onStop()
+
+        when(manufacturer.lowercase(Locale.ROOT)){
+            "xiaomi", "redmi"->{
+                Log.i(TAG, "sono onStop - il dispositivo è un xiaomi/redmi torno nella pagina dei film nollegiati")
+                val intent = Intent(this, MovieRentedActivity::class.java)
+                this.startActivity(intent)
+            }
+            else -> {
+                Log.i(TAG, "sono onStop")
+            }
         }
+
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -309,12 +384,75 @@ class MovieStreamActivity : AppCompatActivity() {
         savedPosition = savedInstanceState.getLong("savedPosition")
     }
 
+    fun showAudioAndSubtitleSelectionDialog(
+        audioTrackOptions: List<MediaPlayer.TrackDescription>,
+        subtitleOptions: List<MediaPlayer.TrackDescription>,
+        mediaPlayer: MediaPlayer,
+        onAudioSelected: (String) -> Unit,
+        onSubtitleSelected: (String) -> Unit
+    ) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_audio_subtitle_selection, null)
+
+        val audioSpinner: Spinner = dialogView.findViewById(R.id.spinnerAudio)
+        val subtitleSpinner: Spinner = dialogView.findViewById(R.id.spinnerSubtitle)
+
+        var audiolist = mutableListOf<String>()
+        for (audio in audioTrackOptions){
+            audiolist.add(audio.name)
+        }
+
+        mediaPlayer.audioTrack.let { currentAudioTrack ->
+            audiolist.removeAt(currentAudioTrack)
+            audiolist.add(0, audioTrackOptions[currentAudioTrack].name)
+        }
+
+        val audioAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, audiolist)
+        audioAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        audioSpinner.adapter = audioAdapter
+
+        var subList = mutableListOf<String>()
+        for(sub in subtitleOptions){
+            subList.add(sub.name)
+        }
+        mediaPlayer.spuTrack.let { currentSpuTrack ->
+            subList.removeAt(currentSpuTrack)
+            subList.add(0, subtitleOptions[currentSpuTrack].name)
+        }
+
+        val subtitleAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, subList)
+        subtitleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        subtitleSpinner.adapter = subtitleAdapter
+
+        val builder = AlertDialog.Builder(this)
+        builder.setView(dialogView)
+            .setTitle(getString(R.string.select_audio_and_subtitles))
+            .setPositiveButton(getString(R.string.conferma)) { dialog, _ ->
+                val selectedAudio = audiolist[audioSpinner.selectedItemPosition]
+                val selectedSubtitle = subList[subtitleSpinner.selectedItemPosition]
+
+                onAudioSelected(selectedAudio.toString())
+                onSubtitleSelected(selectedSubtitle.toString())
+
+                dialog.dismiss()
+            }
+            .setNegativeButton(getString(R.string.annulla)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
-        cancelHideButtonsTimer()
-        mediaPlayer.release()
-        libVLC.release()
+        if (::mediaPlayer.isInitialized) {
+            SharedInfo(this).saveMovieTime(movieid,savedPosition)
+            mediaPlayer.stop()
+            mediaPlayer.release()
+        }
+        if (::libVLC.isInitialized) {
+            libVLC.release()
+        }
+        Log.i(TAG, "sono in OnDestroy")
     }
 
 

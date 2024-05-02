@@ -25,25 +25,71 @@
             android:layout_gravity="center"
             android:visibility="visible">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_restart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <ImageView
+                    android:id="@+id/iv_restart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="6dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_skip_previous" />
+
+                <TextView
+                    android:id="@+id/tvRestart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:gravity="center"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:text="Restart"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_restart"
+                    app:layout_constraintStart_toEndOf="@+id/iv_restart"
+                    app:layout_constraintTop_toTopOf="@+id/iv_restart" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <ImageView
+                android:id="@+id/iv_sub_lang"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="32dp"
+                android:padding="12dp"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_cast"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/iv_cast"
+                app:srcCompat="@drawable/ic_subtitles" />
+
             <ImageView
                 android:id="@+id/iv_cast"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="32dp"
+                android:layout_marginEnd="8dp"
+                android:padding="12dp"
                 android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_title_moviestream"
+                app:layout_constraintEnd_toStartOf="@+id/iv_sub_lang"
+                app:layout_constraintTop_toTopOf="@+id/tv_title_moviestream"
                 app:srcCompat="@drawable/baseline_cast_24" />
 
             <ImageView
                 android:id="@+id/iv_back_page"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:padding="12dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -92,12 +138,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginEnd="32dp"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="16dp"
                 android:progressBackgroundTint="@color/gray_400"
                 android:progressTint="@color/white"
                 android:thumbTint="@color/white"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/cl_restart"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="1.0" />
@@ -134,6 +181,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/iv_cast"
                 app:layout_constraintStart_toEndOf="@+id/iv_back_page"
                 app:layout_constraintTop_toTopOf="@+id/iv_back_page" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </org.videolan.libvlc.util.VLCVideoLayout>

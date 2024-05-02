@@ -47,4 +47,10 @@
     <string name="purchase">Purchase</string>
     <string name="the_movie_will_be_available_in_your_rented_catalog_for_7_days_from_when_you_press_the_confirm_button">The movie will be available in your rented catalog for 7 days from when you press the confirm button!</string>
     <string name="movie_rented_successfully_you_can_find_it_in_your_rented_movies_catalog">Movie rented successfully. You can find it in your rented movies catalog.</string>
+    <string name="select_audio_track">Select audio track</string>
+    <string name="select_subtitles_track">Select subtitles track</string>
+    <string name="select_audio_and_subtitles">Select Audio and Subtitles</string>
+    <string name="conferma">Confirm</string>
+    <string name="annulla">Cancel</string>
+    <string name="rented_movies">Rented movies</string>
 </resources>

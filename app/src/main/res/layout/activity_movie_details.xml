@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".MovieDetailsActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -15,7 +16,6 @@
         android:backgroundTint="?attr/colorOnSurface"
         android:minHeight="?attr/actionBarSize"
         android:paddingLeft="24dp"
-        android:paddingTop="30dp"
         android:paddingRight="24dp"
         android:paddingBottom="10dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,7 +26,7 @@
         app:titleTextColor="?attr/colorPrimary" />
 
     <ScrollView
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -241,8 +241,8 @@
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="6dp"
                     android:layout_marginEnd="24dp"
-                    android:text="content"
                     android:gravity="fill"
+                    android:text="content"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -287,7 +287,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/tv_raccommended"
@@ -306,11 +306,10 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerViewRecommendations"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="16dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"

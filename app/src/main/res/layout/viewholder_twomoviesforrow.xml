@@ -2,10 +2,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:gravity="center|center_horizontal"
+    android:layout_margin="8dp"
+    android:foregroundGravity="center"
+    android:gravity="center"
     android:orientation="horizontal"
-    app:layout_gravity="center|center_horizontal"
-    android:layout_margin="8dp">
+    app:layout_anchorGravity="center"
+    app:layout_gravity="center">
 
     <!-- Layout per il primo film -->
     <include

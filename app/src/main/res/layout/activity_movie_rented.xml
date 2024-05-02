@@ -5,24 +5,24 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MovieRentedActivity">
+    tools:context=".MovieRentedActivity"
+    android:fitsSystemWindows="true">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarRentedMovie"
-        android:layout_width="411dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="?attr/colorOnSurface"
         android:backgroundTint="?attr/colorOnSurface"
         android:minHeight="?attr/actionBarSize"
         android:paddingLeft="24dp"
-        android:paddingTop="30dp"
         android:paddingRight="24dp"
         android:paddingBottom="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/ic_arrow_back"
-        app:title="Rented Movies"
+        app:title="@string/rented_movies"
         app:titleTextColor="?attr/colorPrimary" />
 
     <ScrollView
@@ -30,6 +30,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

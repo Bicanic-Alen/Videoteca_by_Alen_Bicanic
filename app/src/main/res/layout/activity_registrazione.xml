@@ -21,8 +21,10 @@
 
     <EditText
         android:id="@+id/etv_date"
-        android:layout_width="363dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="28dp"
         android:background="@drawable/input_bg"
         android:ems="10"
@@ -40,8 +42,10 @@
 
     <EditText
         android:id="@+id/etv_password"
-        android:layout_width="363dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="40dp"
         android:background="@drawable/input_bg"
         android:ems="10"
@@ -59,8 +63,10 @@
 
     <EditText
         android:id="@+id/etv_email"
-        android:layout_width="363dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="12dp"
         android:background="@drawable/input_bg"
         android:ems="10"
@@ -78,8 +84,10 @@
 
     <EditText
         android:id="@+id/etv_name"
-        android:layout_width="363dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/input_bg"
         android:ems="10"
@@ -97,8 +105,10 @@
 
     <EditText
         android:id="@+id/etv_surname"
-        android:layout_width="363dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/input_bg"
         android:ems="10"
@@ -116,8 +126,10 @@
 
     <Button
         android:id="@+id/btn_signup"
-        android:layout_width="363dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="52dp"
         android:text="Sign me up"
         app:layout_constraintBottom_toBottomOf="parent"

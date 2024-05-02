@@ -48,4 +48,10 @@
     <string name="purchase">Acquista</string>
     <string name="the_movie_will_be_available_in_your_rented_catalog_for_7_days_from_when_you_press_the_confirm_button">Il film è disponibile per 7 giorno dal momento in cui premi il tasto aquista</string>
     <string name="movie_rented_successfully_you_can_find_it_in_your_rented_movies_catalog">Film noleggiato con sucesso. Lo trovi nel catalogo dei tuoi film noleggiati.</string>
+    <string name="select_audio_track">Seleziona traccia audio</string>
+    <string name="select_subtitles_track">Seleziona sottotitoli</string>
+    <string name="select_audio_and_subtitles">Seleziona Audio e Sottotitoli</string>
+    <string name="annulla">Annulla</string>
+    <string name="conferma">Conferma</string>
+    <string name="rented_movies">Film noleggiati</string>
 </resources>

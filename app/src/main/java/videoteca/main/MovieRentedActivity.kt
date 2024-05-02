@@ -1,10 +1,12 @@
 package videoteca.main
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
@@ -36,6 +38,14 @@ class MovieRentedActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_movie_rented)
+
+        val statusBarColor = if (isDarkTheme()) {
+            ContextCompat.getColor(this, R.color.black)
+        } else {
+            ContextCompat.getColor(this, R.color.gray_300)
+        }
+
+        window.statusBarColor = statusBarColor
 
         recyclerViewRentedMovies = findViewById(R.id.recyclerView_rentedmovies)
         loading = findViewById(R.id.loading_rented)
@@ -116,11 +126,17 @@ class MovieRentedActivity : AppCompatActivity() {
                     val expirationDate = getExpirationDate(dayRent)
 
                     tmdbManager.getMovieDetails(idMovie, languageTag) { movieDetails ->
+                        var contIdNull = 0;
                         if (movieDetails != null) {
-                            val rentedMovieInfo = MovieRentedInfo(idMovie, expirationDate, movieDetails.posterPath, movieDetails.title, movieDetails.releaseDate)
-                            listRent.add(rentedMovieInfo)
+                            if(idMovie == 0) {
+                                contIdNull++
+                            }
+                            else{
+                                val rentedMovieInfo = MovieRentedInfo(idMovie, expirationDate, movieDetails.posterPath, movieDetails.title, movieDetails.releaseDate)
+                                listRent.add(rentedMovieInfo)
+                            }
 
-                            if (listRent.size == rentedMovies.size) {
+                            if (listRent.size == rentedMovies.size-contIdNull) {
                                 runOnUiThread {
                                     loading.visibility = View.GONE
                                     adapterRentedMovies = RentedMovieAdapter(listRent)
@@ -132,6 +148,11 @@ class MovieRentedActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun isDarkTheme(): Boolean {
+        val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        return mode == Configuration.UI_MODE_NIGHT_YES
     }
 
 }

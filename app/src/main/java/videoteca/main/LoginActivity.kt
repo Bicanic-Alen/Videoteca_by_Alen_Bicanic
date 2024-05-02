@@ -49,7 +49,6 @@ class LoginActivity : AppCompatActivity() {
                     if (success) {
                         val db = DatabaseManager()
                         val currentUser = AuthService.getCurrentUser()
-
                         Log.d("UserAreaFragment", "c.user id = ${currentUser?.uid}")
                         if(currentUser?.uid != null){
                             Log.d("UserAreaFragment", "CurrentUser not null")
