@@ -10,6 +10,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.Spinner
 import android.widget.TextView
@@ -55,6 +56,7 @@ class MovieStreamActivity : AppCompatActivity() {
     private var isStartPositionSet = false
 
 
+
     //videoplayer
     private lateinit var libVLC: LibVLC
     private lateinit var mediaPlayer: MediaPlayer
@@ -70,6 +72,10 @@ class MovieStreamActivity : AppCompatActivity() {
     private lateinit var btnsPlayerLayout: View
     private lateinit var btnRestart: View
     private lateinit var ivSubLang : ImageView
+    private lateinit var loading: ProgressBar
+
+    private var foundAudioTracks = false
+    private var foundSubtitleTracls = false
 
 
 
@@ -87,10 +93,15 @@ class MovieStreamActivity : AppCompatActivity() {
 
         var options = arrayListOf<String>()
 
+        options = arrayListOf<String>(
+            "--aout=opensles",
+            "--audio-time-stretch",
+            "--fullscreen",
+            "--no-video-title-show",
+        )
 
-
-
-
+        loading = findViewById(R.id.pb_stream)
+        loading.visibility = View.VISIBLE
 
         movieid = intent.getIntExtra("id", 0)
 
@@ -100,12 +111,7 @@ class MovieStreamActivity : AppCompatActivity() {
         savedPosition = SharedInfo(this).getMovieTime(movieid)
 
 
-        options = arrayListOf<String>(
-            "--aout=opensles",
-            "--audio-time-stretch",
-            "--fullscreen",
-            "--no-video-title-show",
-        )
+
 
 
 
@@ -194,14 +200,17 @@ class MovieStreamActivity : AppCompatActivity() {
                     mediaPlayer.setEventListener { event ->
                         when (event?.type) {
                             MediaPlayer.Event.Opening -> {
+                                loading.visibility = View.VISIBLE
                                 // Il video è in fase di apertura
                                 Log.d(TAG, "Video in fase di apertura...")
                             }
                             MediaPlayer.Event.Buffering -> {
+
                                 // Il video è in fase di buffering
                                 Log.d(TAG, "Video in fase di buffering...")
                             }
                             MediaPlayer.Event.Playing -> {
+                                loading.visibility = View.GONE
                                 //il video è in riproduzione
                                 Log.d(TAG, "Video pronto per la riproduzione")
 
@@ -224,35 +233,57 @@ class MovieStreamActivity : AppCompatActivity() {
                                     window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                                 }
 
-                                val audioTracks = mediaPlayer.audioTracks.toList()
-                                val subtitleTracks = mediaPlayer.spuTracks.toList()
+                                var audioTracks:List<MediaPlayer.TrackDescription>
+                                audioTracks= emptyList()
+                                if( mediaPlayer.audioTracks!=null){
+                                    audioTracks = mediaPlayer.audioTracks.toList()
+                                    foundAudioTracks = true
+                                }
+                                var subtitleTracks:List<MediaPlayer.TrackDescription>
+                                subtitleTracks = emptyList()
+                                if(mediaPlayer.spuTracks != null){
+                                    subtitleTracks = mediaPlayer.spuTracks.toList()
+                                    foundSubtitleTracls = true
+                                }
 
-                                ivSubLang.setOnClickListener{
-                                    showAudioAndSubtitleSelectionDialog(
-                                        audioTracks,
-                                        subtitleTracks,
-                                        mediaPlayer,
-                                        { selectedAudio ->
-                                            // Imposta la traccia audio selezionata sul MediaPlayer
-                                            mediaPlayer.audioTracks.forEachIndexed { index, track ->
-                                                if (track.name == selectedAudio) {
-                                                    mediaPlayer.audioTrack = index
-                                                    return@forEachIndexed
+
+
+
+                                if(foundAudioTracks) {
+                                    ivSubLang.setOnClickListener {
+                                        showAudioAndSubtitleSelectionDialog(
+                                            audioTracks,
+                                            subtitleTracks,
+                                            mediaPlayer,
+                                            { selectedAudio ->
+                                                // Imposta la traccia audio selezionata sul MediaPlayer
+                                                mediaPlayer.audioTracks.forEachIndexed { index, track ->
+                                                    if (track.name == selectedAudio) {
+                                                        mediaPlayer.audioTrack = index
+                                                        return@forEachIndexed
+                                                    }
                                                 }
-                                            }
-                                            Log.d(TAG,"Audio selezionato: $selectedAudio")
-                                        },
-                                        { selectedSubtitle ->
-                                            // Imposta i sottotitoli selezionati sul MediaPlayer
-                                            mediaPlayer.spuTracks.forEachIndexed { index, track ->
-                                                if (track.name == selectedSubtitle) {
-                                                    mediaPlayer.spuTrack = index
-                                                    return@forEachIndexed
+                                                Log.d(TAG, "Audio selezionato: $selectedAudio")
+                                            },
+                                            { selectedSubtitle ->
+                                                if(selectedSubtitle!="") {
+                                                    // Imposta i sottotitoli selezionati sul MediaPlayer
+                                                    mediaPlayer.spuTracks.forEachIndexed { index, track ->
+                                                        if (track.name == selectedSubtitle) {
+                                                            mediaPlayer.spuTrack = index
+                                                            return@forEachIndexed
+                                                        }
+                                                    }
                                                 }
+                                                Log.d(
+                                                    TAG,
+                                                    "Sottotitoli selezionati: $selectedSubtitle"
+                                                )
                                             }
-                                            Log.d(TAG,"Sottotitoli selezionati: $selectedSubtitle")
-                                        }
-                                    )
+                                        )
+                                    }
+                                }else{
+                                    ivSubLang.visibility = View.INVISIBLE
                                 }
                             }
                             MediaPlayer.Event.TimeChanged -> {
@@ -396,6 +427,9 @@ class MovieStreamActivity : AppCompatActivity() {
         val audioSpinner: Spinner = dialogView.findViewById(R.id.spinnerAudio)
         val subtitleSpinner: Spinner = dialogView.findViewById(R.id.spinnerSubtitle)
 
+        if(!foundSubtitleTracls){
+            subtitleSpinner.isEnabled = false
+        }
         var audiolist = mutableListOf<String>()
         for (audio in audioTrackOptions){
             audiolist.add(audio.name)
@@ -411,25 +445,31 @@ class MovieStreamActivity : AppCompatActivity() {
         audioSpinner.adapter = audioAdapter
 
         var subList = mutableListOf<String>()
-        for(sub in subtitleOptions){
-            subList.add(sub.name)
-        }
-        mediaPlayer.spuTrack.let { currentSpuTrack ->
-            subList.removeAt(currentSpuTrack)
-            subList.add(0, subtitleOptions[currentSpuTrack].name)
+        if(foundSubtitleTracls){
+            for(sub in subtitleOptions){
+                subList.add(sub.name)
+            }
+
+            mediaPlayer.spuTrack.let { currentSpuTrack ->
+                subList.removeAt(currentSpuTrack)
+                subList.add(0, subtitleOptions[currentSpuTrack].name)
+            }
+
+            val subtitleAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, subList)
+            subtitleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            subtitleSpinner.adapter = subtitleAdapter
         }
 
-        val subtitleAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, subList)
-        subtitleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        subtitleSpinner.adapter = subtitleAdapter
 
         val builder = AlertDialog.Builder(this)
         builder.setView(dialogView)
             .setTitle(getString(R.string.select_audio_and_subtitles))
             .setPositiveButton(getString(R.string.conferma)) { dialog, _ ->
                 val selectedAudio = audiolist[audioSpinner.selectedItemPosition]
-                val selectedSubtitle = subList[subtitleSpinner.selectedItemPosition]
-
+                var selectedSubtitle:String = ""
+                if(foundSubtitleTracls){
+                    selectedSubtitle = subList[subtitleSpinner.selectedItemPosition]
+                }
                 onAudioSelected(selectedAudio.toString())
                 onSubtitleSelected(selectedSubtitle.toString())
 

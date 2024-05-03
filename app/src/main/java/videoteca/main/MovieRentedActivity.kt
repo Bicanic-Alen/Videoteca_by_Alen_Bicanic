@@ -2,6 +2,7 @@ package videoteca.main
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import androidx.activity.enableEdgeToEdge
@@ -29,6 +30,7 @@ class MovieRentedActivity : AppCompatActivity() {
     private val tmdbManager = TMDB_Manager()
     private val currentLocale: Locale = Locale.getDefault()
     private val languageTag = currentLocale.toLanguageTag()
+    private val TAG = "MovieRentedActivity"
 
     private lateinit var recyclerViewRentedMovies:RecyclerView
     private lateinit var adapterRentedMovies: RentedMovieAdapter
@@ -70,12 +72,14 @@ class MovieRentedActivity : AppCompatActivity() {
             db.getRentedMovies(idu) { rentedMovies ->
                 for (rented in rentedMovies) {
                     val rentDayTimestamp = rented.rentDay?.seconds ?: 0
+                    Log.i(TAG, "rentData tamp stamp: $rentDayTimestamp")
                     if (checkIfMoreThanSevenDaysPassed(rentDayTimestamp)) {
+                        Log.i(TAG, "${checkIfMoreThanSevenDaysPassed(rentDayTimestamp)}")
                         db.removeRentedMovie(idu, rented.id)
+                        initInfo()
                     }
                 }
             }
-
         }
         initInfo()
     }
@@ -90,7 +94,8 @@ class MovieRentedActivity : AppCompatActivity() {
         val currentDate = Date()
 
         val difference = differenceInDays(firebaseDate, currentDate)
-        return difference > 7
+        Log.i(TAG,"diferenza di giorni: $difference")
+        return difference >= 7
     }
 
     /**

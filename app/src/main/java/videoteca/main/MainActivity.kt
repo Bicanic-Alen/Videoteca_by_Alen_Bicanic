@@ -1,9 +1,11 @@
    package videoteca.main
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.Firebase
@@ -32,7 +34,17 @@ import videoteca.main.Fragments.WatchlistFragment
                 else -> false
             }
 
+
+
         }
+
+        val statusBarColor = if (isDarkTheme()) {
+            ContextCompat.getColor(this, R.color.black)
+        } else {
+            ContextCompat.getColor(this, R.color.gray_300)
+        }
+
+        window.statusBarColor = statusBarColor
 
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
@@ -100,5 +112,10 @@ import videoteca.main.Fragments.WatchlistFragment
    private fun replaceFragment(fragment: Fragment){
        supportFragmentManager.beginTransaction().replace(R.id.frameLayout, fragment).commit()
 
+   }
+
+   private fun isDarkTheme(): Boolean {
+       val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+       return mode == Configuration.UI_MODE_NIGHT_YES
    }
 }

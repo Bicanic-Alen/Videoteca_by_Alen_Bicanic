@@ -35,6 +35,7 @@ class SearchMovieAdapter(private val items: List<MovieResponse.Movie>) : Recycle
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        Log.d(TAG, "nome film: ${items[position].title}, id film: ${items[position].id}")
         holder.tvTitle.text = items[position].title
         var year:String = ""
         if(items[position].releaseDate!=""){
