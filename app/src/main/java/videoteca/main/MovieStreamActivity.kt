@@ -55,6 +55,8 @@ class MovieStreamActivity : AppCompatActivity() {
     private var savedPosition: Long = 0
     private var isStartPositionSet = false
 
+    private var flagBack = false
+
 
 
     //videoplayer
@@ -344,10 +346,9 @@ class MovieStreamActivity : AppCompatActivity() {
 
 
         ivBackRent.setOnClickListener {
+            flagBack = true
             onBackPressed()
         }
-
-
 
     }
 
@@ -376,34 +377,6 @@ class MovieStreamActivity : AppCompatActivity() {
         return String.format("%d:%02d:%02d", ore, minuti, secondi)
     }
 
-    override fun onPause() {
-        super.onPause()
-        Log.i(TAG, "sono in onPause")
-        if (mediaPlayer.isPlaying) {
-            savedPosition = mediaPlayer.time
-            SharedInfo(this).saveMovieTime(movieid,savedPosition)
-            Log.i(TAG, "il film è alla time position: $savedPosition")
-            mediaPlayer.pause()
-            ivPlaypause.setImageResource(R.drawable.ic_play_circle_outline)
-        }
-        savedPosition = mediaPlayer.time
-    }
-
-    override fun onStop() {
-        super.onStop()
-
-        when(manufacturer.lowercase(Locale.ROOT)){
-            "xiaomi", "redmi"->{
-                Log.i(TAG, "sono onStop - il dispositivo è un xiaomi/redmi torno nella pagina dei film nollegiati")
-                val intent = Intent(this, MovieRentedActivity::class.java)
-                this.startActivity(intent)
-            }
-            else -> {
-                Log.i(TAG, "sono onStop")
-            }
-        }
-
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -479,6 +452,36 @@ class MovieStreamActivity : AppCompatActivity() {
                 dialog.dismiss()
             }
             .show()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.i(TAG, "sono in onPause")
+        if (mediaPlayer.isPlaying) {
+            savedPosition = mediaPlayer.time
+            SharedInfo(this).saveMovieTime(movieid,savedPosition)
+            Log.i(TAG, "il film è alla time position: $savedPosition")
+            mediaPlayer.pause()
+            ivPlaypause.setImageResource(R.drawable.ic_play_circle_outline)
+        }
+        savedPosition = mediaPlayer.time
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        when(manufacturer.lowercase(Locale.ROOT)){
+            "xiaomi", "redmi"->{
+                Log.i(TAG, "sono onStop - il dispositivo è un xiaomi/redmi torno nella pagina dei film nollegiati")
+                if(!flagBack){
+                    onBackPressed()
+                }
+            }
+            else -> {
+                Log.i(TAG, "sono onStop")
+            }
+        }
+
     }
 
 

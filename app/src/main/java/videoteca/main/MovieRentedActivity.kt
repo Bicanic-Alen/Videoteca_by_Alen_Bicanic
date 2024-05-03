@@ -31,6 +31,7 @@ class MovieRentedActivity : AppCompatActivity() {
     private val currentLocale: Locale = Locale.getDefault()
     private val languageTag = currentLocale.toLanguageTag()
     private val TAG = "MovieRentedActivity"
+    private var flagInit = false
 
     private lateinit var recyclerViewRentedMovies:RecyclerView
     private lateinit var adapterRentedMovies: RentedMovieAdapter
@@ -81,7 +82,11 @@ class MovieRentedActivity : AppCompatActivity() {
                 }
             }
         }
-        initInfo()
+        Log.d(TAG, "è gia stato inzializato: $flagInit")
+        if(!flagInit) {
+            Log.d(TAG, "sono nel if check flag")
+            initInfo()
+        }
     }
 
     /**
@@ -120,6 +125,7 @@ class MovieRentedActivity : AppCompatActivity() {
     }
 
     private fun initInfo(){
+        flagInit = true
         //ottengo informazioni per la copertina e titolo e durata, e data di scadenza
         if (idu != null) {
             db.getRentedMovies(idu) { rentedMovies ->

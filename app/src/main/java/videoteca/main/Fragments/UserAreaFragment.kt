@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import videoteca.main.Adapters.FavoriteGenreAdapter
+import videoteca.main.GenresFavoriteActivity
 import videoteca.main.LoginActivity
 import videoteca.main.MovieRentedActivity
 import videoteca.main.R
@@ -44,8 +46,6 @@ class UserAreaFragment : Fragment() {
         }
 
 
-
-
         val tvSettings = view.findViewById<TextView>(R.id.tv_settings_ua)
         tvSettings.setOnClickListener {
             val intent = Intent(context, SettingsActivity::class.java)
@@ -59,12 +59,11 @@ class UserAreaFragment : Fragment() {
         }
 
 
-
         val tvFav = view.findViewById<TextView>(R.id.tv_genres_fav)
-        //tvFav.setOnClickListener {  }
-
-
-
+        tvFav.setOnClickListener {
+            val intent = Intent(context, GenresFavoriteActivity::class.java)
+            context?.startActivity(intent)
+        }
 
 
     }

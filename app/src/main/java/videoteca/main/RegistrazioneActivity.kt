@@ -71,7 +71,7 @@ class RegistrazioneActivity : AppCompatActivity() {
                             if(success){
                                 sharedInfo.saveUserData(user.name, user.surname, idu)
                                 Log.d(TAG, "add to db :success")
-                                val intent = Intent(this, MainActivity::class.java)
+                                val intent = Intent(this, GenresRegActivity::class.java)
                                 startActivity(intent)
                                 finish()
                             }else{

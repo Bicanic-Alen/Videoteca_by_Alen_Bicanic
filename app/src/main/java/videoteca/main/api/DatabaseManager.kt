@@ -22,6 +22,12 @@ class DatabaseManager {
     private val usersCollection = db.collection("Users")
     private val videotecaCollection = db.collection("videoteca")
 
+    /**
+     * Aggiunge un utente nel database firebase
+     * @param uid id del utente
+     * @param user oggetto che raprensenta un documento Users
+     * @param onComplete funzione che al completamento del caricamento resituisce l'esito del operazione
+     */
     fun addUser(uid: String, user: UserDB, onComplete: (Boolean, String?) -> Unit) {
 
         Log.d("DatabaseManager", "uid: $uid")
@@ -43,6 +49,11 @@ class DatabaseManager {
             }
     }
 
+    /**
+     * resituisce un utente specifico
+     * @param uid id del utente corrente
+     * @return resituisce un oggetto di tipo UserDB
+     */
     suspend fun getCurrentUser(uid: String): UserDB? {
         val userDocument: DocumentSnapshot //visualizzo un istante del documento
         try {
@@ -61,7 +72,11 @@ class DatabaseManager {
     }
 
 
-
+    /**
+     * resituisce un item specifico presente nella roccolta videoteca
+     * @param idMovie richiede l'id del film (item)
+     * @return resitusce un oggetto di tipo videoteca
+     */
     fun getVidetecaItem(idMovie:Int, callback: (Videoteca?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getVideotecaItemAsync(idMovie)
@@ -88,9 +103,107 @@ class DatabaseManager {
     }
 
 
+    /**
+     * Restituisce i generi preferiti di un utente
+     * @param uid id del utente
+     * @return List<Int> lista dei id dei generi
+     */
+    fun getFavoriteGenres(uid:String, callback: (List<Int>?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = getFavoriteGenresAsync(uid)
+            Log.d("DatabaseManager", "response : $response")
+            callback(response)
+        }
+    }
+
+    private suspend fun getFavoriteGenresAsync(idu: String):List<Int> {
+        val userDocumentReference = usersCollection.document(idu)
+        return try {
+            val documentSnapshot = userDocumentReference.get().await()
+            if (documentSnapshot.exists()) {
+                val user = documentSnapshot.toObject(UserDB::class.java)
+                user?.favGenres ?: emptyList()
+            } else {
+                emptyList()
+            }
+        } catch (e: Exception) {
+            Log.e("DatabaseManager", "Errore nel recupero dei generi preferiti", e)
+            emptyList()
+        }
+    }
+
+    /**
+     * aggiunge un genere ai preferiti
+     * @param idu id del utente
+     * @param genreId id del genere da aggiungere
+     */
+
+    fun addFavGenre(idu: String, genreId: Int) {
+        val userDocumentReference = usersCollection.document(idu)
+
+        userDocumentReference.get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val user = documentSnapshot.toObject(UserDB::class.java)
+                    val favGenres = user?.favGenres?.toMutableList() ?: mutableListOf()
+                    favGenres.add(genreId)
+
+                    userDocumentReference.update("favGenres", favGenres)
+                        .addOnSuccessListener {
+                            Log.d("DatabaseManager", "Modifica effettuata con successo")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("DatabaseManager", "Errore durante l'aggiunta del genere", e)
+                        }
+                } else {
+                    Log.e("DatabaseManager", "Il documento utente non esiste")
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("DatabaseManager", "Errore durante il recupero del documento utente", e)
+            }
+    }
+
+
+    /**
+     * rimuove un genere preferito dalla lista dei generi preferiti
+     * @param idu id del utente
+     * @param idGenre id del genere da rimuovere
+     */
+    fun removeFavGenre(idu: String, idGenre: Int) {
+        val userDocumentReference = usersCollection.document(idu)
+
+        userDocumentReference.get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val user = documentSnapshot.toObject(UserDB::class.java)
+                    val favGenres = user?.favGenres?.toMutableList() ?: mutableListOf()
+
+                    favGenres.remove(idGenre)
+
+                    userDocumentReference.update("favGenres", favGenres)
+                        .addOnSuccessListener {
+                            Log.d("DatabaseManager", "genere rimosso con successo")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("DatabaseManager", "Errore durante la rimozione del genere", e)
+                        }
+                } else {
+                    Log.e("DatabaseManager", "Il documento utente non esiste")
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("DatabaseManager", "Errore durante il recupero del documento utente", e)
+            }
+    }
 
 
 
+    /**
+     * resituisce i film preferiti di un utente
+     * @param idu l'id del utente
+     * @return restituisce una lista di interi che rapresentati gli id dei film
+     */
     fun getFavMovies(idu:String, callback: (List<Int>) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getFavMoviesAsync(idu)
@@ -99,6 +212,11 @@ class DatabaseManager {
         }
     }
 
+    /**
+     * resituisce i film nella watchlist di un utente
+     * @param idu l'id del utente
+     * @return restituisce una lista di interi che rapresentati gli id dei film
+     */
     fun getWatchlist(idu:String, callback: (List<Int>) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getWatchlistAsync(idu)
@@ -125,6 +243,11 @@ class DatabaseManager {
     }
 
 
+    /**
+     * resituisce i film nollegiati di un utente
+     * @param idu l'id del utente
+     * @return restituisce una lista di UserDB.RentedMoviesInfo
+     */
     fun getRentedMovies(idu:String, callback: (List<UserDB.RentedMoviesInfo>) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getRentedMoviesAsync(idu)
@@ -150,6 +273,8 @@ class DatabaseManager {
     }
 
 
+
+
     private suspend fun getWatchlistAsync(idu: String): List<Int> {
         val userDocumentReference = usersCollection.document(idu)
 
@@ -167,6 +292,11 @@ class DatabaseManager {
         }
     }
 
+    /**
+     * aggiunge un film ai nollegiati
+     * @param idu id del utente
+     * @param movieId id del film da aggiungere
+     */
     fun addRentedMovies(idu: String, movieId: Int) {
         val userDocumentReference = usersCollection.document(idu)
 
@@ -192,6 +322,12 @@ class DatabaseManager {
                 Log.e("DatabaseManager", "Errore durante il recupero del documento utente", e)
             }
     }
+
+    /**
+     * rimuove un film dai nollegiati
+     * @param idu id del utente
+     * @param movieId id del film da rimuovere
+     */
 
     fun removeRentedMovie(idu: String, movieId: Int) {
         val userDocumentReference = usersCollection.document(idu)
@@ -229,7 +365,11 @@ class DatabaseManager {
     }
 
 
-
+    /**
+     * aggiunge un film hai preferiti
+     * @param idu id del utente
+     * @param movieId id del film da aggiugnere
+     */
     fun addFavMovies(idu: String, movieId: Int) {
         val userDocumentReference = usersCollection.document(idu)
 
@@ -267,11 +407,8 @@ class DatabaseManager {
                 if (documentSnapshot.exists()) {
                     val user = documentSnapshot.toObject(UserDB::class.java)
                     val favMovies = user?.favMovies?.toMutableList() ?: mutableListOf()
-
-                    // Rimuovi l'ID del film dalla lista
                     favMovies.remove(movieId)
 
-                    // Aggiorna l'array nel documento
                     userDocumentReference.update("favMovies", favMovies)
                         .addOnSuccessListener {
                             Log.d("DatabaseManager", "Film preferito rimosso con successo")
@@ -324,10 +461,9 @@ class DatabaseManager {
                     val user = documentSnapshot.toObject(UserDB::class.java)
                     val watchlist = user?.watchlist?.toMutableList() ?: mutableListOf()
 
-                    // Rimuovi l'ID del film dalla lista
+
                     watchlist.remove(movieId)
 
-                    // Aggiorna l'array nel documento
                     userDocumentReference.update("watchlist", watchlist)
                         .addOnSuccessListener {
                             Log.d("DatabaseManager", "Film preferito rimosso con successo")

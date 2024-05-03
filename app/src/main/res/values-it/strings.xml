@@ -54,4 +54,8 @@
     <string name="annulla">Annulla</string>
     <string name="conferma">Conferma</string>
     <string name="rented_movies">Film noleggiati</string>
+    <string name="favorite_genres">Generi preferiti</string>
+    <string name="confirme_changes">Conferma modifiche</string>
+    <string name="select_your_favorite_genres">Seleziona i tuoi generi preferiti</string>
+    <string name="continue_btn">Continua</string>
 </resources>
