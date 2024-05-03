@@ -22,6 +22,8 @@ import videoteca.main.Domain.GenreList
 import videoteca.main.Domain.SliderItems
 import videoteca.main.R
 import videoteca.main.Domain.Movie.MovieResponse
+import videoteca.main.api.AuthService
+import videoteca.main.api.DatabaseManager
 import videoteca.main.api.TMDB_Manager
 import java.util.Locale
 import kotlin.math.abs
@@ -37,14 +39,17 @@ class HomeFragment : Fragment() {
     private lateinit var recyclerViewPopular:RecyclerView
     private lateinit var recyclerViewUpComming: RecyclerView
     private lateinit var recyclerViewGenres: RecyclerView
+    private lateinit var recyclerViewRec: RecyclerView
     private lateinit var adapterTopRating: Adapter<*>
     private lateinit var adapterUpComming:RecyclerView.Adapter<*>
     private lateinit var adapterPopular:RecyclerView.Adapter<*>
     private lateinit var adapterGenres:RecyclerView.Adapter<*>
+    private lateinit var adapterRec: FilmAdapter
     private lateinit var loadingBar1:ProgressBar
     private lateinit var loadingBar2:ProgressBar
     private lateinit var loadingBar3: ProgressBar
     private lateinit var loadingBar4:ProgressBar
+    private lateinit var loadingBar5:ProgressBar
 
     private val currentLocale: Locale = Locale.getDefault()
     private val language:String = currentLocale.language
@@ -74,6 +79,10 @@ class HomeFragment : Fragment() {
         recyclerViewUpComming = view.findViewById(R.id.recyclerViewUpComming)
         recyclerViewUpComming.setLayoutManager(LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false))
 
+        recyclerViewRec = view.findViewById(R.id.recyclerview_rec)
+        recyclerViewRec.setLayoutManager(LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false))
+
+
         recyclerViewGenres = view.findViewById(R.id.recyclerViewGenresHomePage)
         recyclerViewGenres.setLayoutManager(LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false))
 
@@ -87,6 +96,9 @@ class HomeFragment : Fragment() {
         loadingBar3.visibility = View.VISIBLE
         loadingBar4 = view.findViewById(R.id.progressBar4)
         loadingBar4.visibility = View.VISIBLE
+
+        loadingBar5 = view.findViewById(R.id.progressBar5)
+        loadingBar5.visibility = View.VISIBLE
 
 
         sliderHandler = Handler()
@@ -160,6 +172,27 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+
+        AuthService.getCurrentUser()?.let {
+            DatabaseManager().getFavoriteGenres(it.uid){genreList->
+                if (genreList != null) {
+                    tmdbApiManager.getMovieDiscover(languageTag, genreList, 1){movieResponse->
+                        activity?.runOnUiThread { //entro del thread pricipale
+                            if (movieResponse != null && activity != null && isAdded) {
+                                loadingBar5.visibility = View.GONE
+                                adapterRec = FilmAdapter(movieResponse.results)
+                                recyclerViewRec.adapter = adapterRec
+                                Log.e("HomeFragment", "Success to fetch movies (recomended)")
+                            } else {
+                                Log.e("HomeFragment", "Failed to fetch movies (recomended)")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
 
 
 

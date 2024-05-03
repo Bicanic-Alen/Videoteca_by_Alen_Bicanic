@@ -43,6 +43,14 @@ class TMDB_Manager {
         }
     }
 
+    fun getMovieDiscover(language: String, genreIdList: List<Int>, page: Int,callback: (MovieResponse?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = getMovieDiscoverAsync(language, genreIdList, page)
+            Log.d(TAG, "response : $response")
+            callback(response)
+        }
+    }
+
     fun getMoviePopular(language: String, callback: (MovieResponse?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getMoviePopularAsync(language)
@@ -192,6 +200,38 @@ class TMDB_Manager {
 
             val request = Request.Builder()
                 .url("https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=${language}&page=${page}&sort_by=popularity.desc&with_genres=${genreId}")
+                .get()
+                .addHeader("accept", "application/json")
+                .addHeader("Authorization", "Bearer $accessToken")
+                .build()
+
+            val response = client.newCall(request).execute()
+            val responseBody = response.body?.string()
+            val movieResponse = Gson().fromJson(responseBody, MovieResponse::class.java)
+            movieResponse
+
+        } catch (e: Exception) {
+            Log.e(TAG, "Error fetching movies", e)
+            null
+        }
+    }
+
+    private suspend fun getMovieDiscoverAsync(language: String, genreIdList: List<Int>, page:Int): MovieResponse? {
+        return try {
+
+            var stringGenresids = ""
+            for (id in genreIdList){
+                stringGenresids += "${id}-"
+            }
+
+            stringGenresids = stringGenresids.dropLast(1)
+
+            Log.d(TAG, "stringa dei generi: $stringGenresids")
+
+            val client = OkHttpClient()
+
+            val request = Request.Builder()
+                .url("https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=${language}&page=${page}&sort_by=popularity.desc&with_genres=${stringGenresids}")
                 .get()
                 .addHeader("accept", "application/json")
                 .addHeader("Authorization", "Bearer $accessToken")
