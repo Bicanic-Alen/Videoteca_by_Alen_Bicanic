@@ -58,4 +58,7 @@
     <string name="confirme_changes">Conferma modifiche</string>
     <string name="select_your_favorite_genres">Seleziona i tuoi generi preferiti</string>
     <string name="continue_btn">Continua</string>
+    <string name="no_movies_have_been_added_to_the_watchlist_yet">Non sono stati aggiunti ancora film alla watchlist.</string>
+    <string name="no_favorite_movies_have_been_selected_yet">Non sono stati ancora selezionati film preferiti.</string>
+    <string name="there_are_currently_no_rented_movies">Non ci sono ancora film noleggiati.</string>
 </resources>

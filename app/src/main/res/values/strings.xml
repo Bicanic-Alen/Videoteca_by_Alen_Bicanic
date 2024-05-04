@@ -57,4 +57,7 @@
     <string name="confirme_changes">Confirme changes</string>
     <string name="select_your_favorite_genres">Select your favorite genres</string>
     <string name="continue_btn">"Continue "</string>
+    <string name="no_movies_have_been_added_to_the_watchlist_yet">No movies have been added to the watchlist yet.</string>
+    <string name="no_favorite_movies_have_been_selected_yet">No favorite movies have been selected yet.</string>
+    <string name="there_are_currently_no_rented_movies">There are currently no rented movies.</string>
 </resources>

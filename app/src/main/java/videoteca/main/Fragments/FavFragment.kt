@@ -58,6 +58,7 @@ class FavFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         loading.visibility = View.VISIBLE
+        tvAlert.visibility = View.INVISIBLE
         updateFavoriteMoviesList()
     }
 

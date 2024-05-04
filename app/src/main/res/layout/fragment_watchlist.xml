@@ -40,13 +40,16 @@
 
     <TextView
         android:id="@+id/tv_nowatchlistitems"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
         android:drawableLeft="@drawable/ic_error_outline"
         android:drawablePadding="12dp"
-        android:text="No movies have been added to the watchlist yet."
+        android:text="@string/no_movies_have_been_added_to_the_watchlist_yet"
         android:textAlignment="center"
+        android:textColor="?attr/colorPrimary"
         android:textSize="20sp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"

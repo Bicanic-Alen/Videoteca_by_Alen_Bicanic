@@ -46,7 +46,7 @@
         android:layout_marginEnd="24dp"
         android:drawableLeft="@drawable/ic_error_outline"
         android:drawablePadding="12dp"
-        android:text="No favorite movies have been selected yet."
+        android:text="@string/no_favorite_movies_have_been_selected_yet"
         android:textAlignment="center"
         android:textColor="?attr/colorPrimary"
         android:textSize="20sp"
