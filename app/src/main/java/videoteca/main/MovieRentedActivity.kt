@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -36,6 +37,7 @@ class MovieRentedActivity : AppCompatActivity() {
     private lateinit var recyclerViewRentedMovies:RecyclerView
     private lateinit var adapterRentedMovies: RentedMovieAdapter
     private lateinit var loading: ProgressBar
+    private lateinit var tvAlert:TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +52,7 @@ class MovieRentedActivity : AppCompatActivity() {
 
         window.statusBarColor = statusBarColor
 
+        tvAlert = findViewById(R.id.tv_alert_norentmovie)
         recyclerViewRentedMovies = findViewById(R.id.recyclerView_rentedmovies)
         loading = findViewById(R.id.loading_rented)
         loading.visibility = View.VISIBLE
@@ -129,32 +132,42 @@ class MovieRentedActivity : AppCompatActivity() {
         //ottengo informazioni per la copertina e titolo e durata, e data di scadenza
         if (idu != null) {
             db.getRentedMovies(idu) { rentedMovies ->
-                val listRent: MutableList<MovieRentedInfo> = mutableListOf()
+                if(rentedMovies.isNotEmpty()){
+                    runOnUiThread{
+                        tvAlert.visibility = View.GONE
+                    }
+                    val listRent: MutableList<MovieRentedInfo> = mutableListOf()
 
-                for (rented in rentedMovies) {
-                    val idMovie = rented.id
-                    val dayRent = rented.rentDay?.seconds ?: 0
-                    val expirationDate = getExpirationDate(dayRent)
+                    for (rented in rentedMovies) {
+                        val idMovie = rented.id
+                        val dayRent = rented.rentDay?.seconds ?: 0
+                        val expirationDate = getExpirationDate(dayRent)
 
-                    tmdbManager.getMovieDetails(idMovie, languageTag) { movieDetails ->
-                        var contIdNull = 0;
-                        if (movieDetails != null) {
-                            if(idMovie == 0) {
-                                contIdNull++
-                            }
-                            else{
-                                val rentedMovieInfo = MovieRentedInfo(idMovie, expirationDate, movieDetails.posterPath, movieDetails.title, movieDetails.releaseDate)
-                                listRent.add(rentedMovieInfo)
-                            }
+                        tmdbManager.getMovieDetails(idMovie, languageTag) { movieDetails ->
+                            var contIdNull = 0;
+                            if (movieDetails != null) {
+                                if(idMovie == 0) {
+                                    contIdNull++
+                                }
+                                else{
+                                    val rentedMovieInfo = MovieRentedInfo(idMovie, expirationDate, movieDetails.posterPath, movieDetails.title, movieDetails.releaseDate)
+                                    listRent.add(rentedMovieInfo)
+                                }
 
-                            if (listRent.size == rentedMovies.size-contIdNull) {
-                                runOnUiThread {
-                                    loading.visibility = View.GONE
-                                    adapterRentedMovies = RentedMovieAdapter(listRent)
-                                    recyclerViewRentedMovies.adapter = adapterRentedMovies
+                                if (listRent.size == rentedMovies.size-contIdNull) {
+                                    runOnUiThread {
+                                        loading.visibility = View.GONE
+                                        adapterRentedMovies = RentedMovieAdapter(listRent)
+                                        recyclerViewRentedMovies.adapter = adapterRentedMovies
+                                    }
                                 }
                             }
                         }
+                    }
+                }else{
+                    runOnUiThread {
+                        loading.visibility = View.GONE
+                        tvAlert.visibility = View.VISIBLE
                     }
                 }
             }
