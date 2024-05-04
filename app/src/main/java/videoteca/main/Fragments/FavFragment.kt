@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import videoteca.main.Adapters.SearchMovieAdapter
@@ -29,6 +31,7 @@ class FavFragment : Fragment() {
     private val db = DatabaseManager()
     private lateinit var recyclerViewFavMovies:RecyclerView
     private lateinit var loading:ProgressBar
+    private lateinit var tvAlert: TextView
     private val utenteId = AuthService.getCurrentUser()?.uid
 
     override fun onCreateView(
@@ -47,6 +50,8 @@ class FavFragment : Fragment() {
         recyclerViewFavMovies.adapter = adapterFavorite
         loading = view.findViewById(R.id.progressBar_fav)
         loading.visibility = View.VISIBLE
+        tvAlert = view.findViewById(R.id.tv_nofav)
+        tvAlert.visibility = View.INVISIBLE
         updateFavoriteMoviesList()
     }
 
@@ -59,22 +64,30 @@ class FavFragment : Fragment() {
     private fun updateFavoriteMoviesList() {
         if (utenteId != null) {
             db.getFavMovies(utenteId) { favMovie ->
-                Log.d(TAG, "ottengo lista favoriti: ${favMovie.toString()}")
-                val listFavMovies: MutableList<MovieDetails> = mutableListOf()
-                for (item in favMovie) {
-                    tmdbApiManager.getMovieDetails(item, languageTag) { movieDetails ->
-                        if (movieDetails != null) {
-                            Log.d(TAG, "aggiungo film alla lista: ${movieDetails.title}")
-                            listFavMovies.add(movieDetails)
-                            // Aggiorna l'adapter solo quando tutti i dettagli del film sono stati caricati
-                            if (listFavMovies.size == favMovie.size) {
-                                activity?.runOnUiThread {
-                                    loading.visibility = View.GONE
-                                    adapterFavorite = TwoMoviesForRowFavAdapter(listFavMovies)
-                                    recyclerViewFavMovies.adapter = adapterFavorite
+                if(favMovie.isNotEmpty()) {
+                    Log.d(TAG, "ottengo lista favoriti: ${favMovie.toString()}")
+                    val listFavMovies: MutableList<MovieDetails> = mutableListOf()
+                    for (item in favMovie) {
+                        tmdbApiManager.getMovieDetails(item, languageTag) { movieDetails ->
+                            if (movieDetails != null) {
+                                Log.d(TAG, "aggiungo film alla lista: ${movieDetails.title}")
+                                listFavMovies.add(movieDetails)
+                                // Aggiorna l'adapter solo quando tutti i dettagli del film sono stati caricati
+                                if (listFavMovies.size == favMovie.size) {
+                                    activity?.runOnUiThread {
+                                        tvAlert.visibility = View.GONE
+                                        loading.visibility = View.GONE
+                                        adapterFavorite = TwoMoviesForRowFavAdapter(listFavMovies)
+                                        recyclerViewFavMovies.adapter = adapterFavorite
+                                    }
                                 }
                             }
                         }
+                    }
+                }else{
+                    activity?.runOnUiThread{
+                        loading.visibility = View.GONE
+                        tvAlert.visibility = View.VISIBLE
                     }
                 }
             }
