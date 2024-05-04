@@ -7,12 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import videoteca.main.Adapters.FavoriteGenreAdapter
 import videoteca.main.GenresFavoriteActivity
 import videoteca.main.LoginActivity
 import videoteca.main.MovieRentedActivity
 import videoteca.main.R
-import videoteca.main.SettingsActivity
 import videoteca.main.SharedInfo
 import videoteca.main.api.AuthService
 import java.util.Calendar
@@ -45,12 +43,6 @@ class UserAreaFragment : Fragment() {
             requireActivity().finish()
         }
 
-
-        val tvSettings = view.findViewById<TextView>(R.id.tv_settings_ua)
-        tvSettings.setOnClickListener {
-            val intent = Intent(context, SettingsActivity::class.java)
-            context?.startActivity(intent)
-        }
 
         val tvRented = view.findViewById<TextView>(R.id.tv_rented)
         tvRented.setOnClickListener {

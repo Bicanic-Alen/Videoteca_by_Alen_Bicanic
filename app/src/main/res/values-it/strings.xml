@@ -12,7 +12,7 @@
     <string name="user_area">Area Personale</string>
     <string name="watchlist">Watchlist</string>
     <string name="search">Ricerca</string>
-    <string name="settings">Impostazioni</string>
+    <string name="settings">Impostazioni App</string>
     <string name="authentication_failed">Auteticazione fallita.</string>
     <string name="logout">disconnettiti</string>
     <string name="recover_your_password">Recupera la tua password</string>
