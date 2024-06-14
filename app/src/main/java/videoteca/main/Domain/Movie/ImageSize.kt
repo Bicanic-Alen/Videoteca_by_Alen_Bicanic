@@ -1,5 +1,12 @@
 package videoteca.main.Domain.Movie
 
+
+/**
+ * Enumerazione che rappresenta le dimensioni disponibili per le immagini.
+ *
+ * @property value Valore della dimensione dell'immagine utilizzato nelle chiamate API.
+ * @constructor Crea un'istanza di ImageSize con il valore specificato.
+ */
 enum class ImageSize(val value: String) {
     W300("w300"),
     W780("w780"),
@@ -7,6 +14,12 @@ enum class ImageSize(val value: String) {
     ORIGINAL("original")
 }
 
+/**
+ * Enumerazione che rappresenta le dimensioni disponibili per i loghi.
+ *
+ * @property value Valore della dimensione del logo utilizzato nelle chiamate API.
+ * @constructor Crea un'istanza di LogoSize con il valore specificato.
+ */
 enum class LogoSize(val value: String) {
     W45("w45"),
     W92("w92"),
@@ -17,6 +30,12 @@ enum class LogoSize(val value: String) {
     ORIGINAL("original")
 }
 
+/**
+ * Enumerazione che rappresenta le dimensioni disponibili per i poster.
+ *
+ * @property value Valore della dimensione del poster utilizzato nelle chiamate API.
+ * @constructor Crea un'istanza di PosterSize con il valore specificato.
+ */
 enum class PosterSize(val value: String) {
     W92("w92"),
     W154("w154"),
@@ -27,6 +46,12 @@ enum class PosterSize(val value: String) {
     ORIGINAL("original")
 }
 
+/**
+ * Enumerazione che rappresenta le dimensioni disponibili per i profili.
+ *
+ * @property value Valore della dimensione del profilo utilizzato nelle chiamate API.
+ * @constructor Crea un'istanza di ProfileSize con il valore specificato.
+ */
 enum class ProfileSize(val value: String) {
     W45("w45"),
     W185("w185"),
@@ -34,6 +59,12 @@ enum class ProfileSize(val value: String) {
     ORIGINAL("original")
 }
 
+/**
+ * Enumerazione che rappresenta le dimensioni disponibili per le still image.
+ *
+ * @property value Valore della dimensione della still image utilizzato nelle chiamate API.
+ * @constructor Crea un'istanza di StillSize con il valore specificato.
+ */
 enum class StillSize(val value: String) {
     W92("w92"),
     W185("w185"),
@@ -41,6 +72,12 @@ enum class StillSize(val value: String) {
     ORIGINAL("original")
 }
 
+/**
+ * Enumerazione che rappresenta le chiavi di modifica per le richieste di cambiamento.
+ *
+ * @property key Chiave di modifica utilizzata nelle richieste di cambio.
+ * @constructor Crea un'istanza di ChangeKey con la chiave specificata.
+ */
 enum class ChangeKey(val key: String) {
     ADULT("adult"),
     AIR_DATE("air_date"),

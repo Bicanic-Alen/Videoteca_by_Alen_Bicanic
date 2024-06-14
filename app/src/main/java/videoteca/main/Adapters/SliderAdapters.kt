@@ -18,6 +18,13 @@ import videoteca.main.MovieDetailsActivity
 import videoteca.main.R
 import videoteca.main.api.TMDB_ImageManager
 
+/**
+ * Adapter per gestire la visualizzazione dei film in uno slider (ViewPager2).
+ *
+ * @param movieResponse La risposta del film contenente la lista dei film.
+ * @param viewPager2 L'istanza di ViewPager2 che utilizza questo adapter.
+ */
+
 class SliderAdapters(movieResponse: MovieResponse, viewPager2: ViewPager2) :
     RecyclerView.Adapter<SliderAdapters.SliderViewHolder>() {
 
@@ -25,11 +32,19 @@ class SliderAdapters(movieResponse: MovieResponse, viewPager2: ViewPager2) :
     private val viewPager2: ViewPager2
     private var context: Context? = null
 
+
     init {
         movieList = movieResponse.results.toMutableList()
         this.viewPager2 = viewPager2
     }
 
+    /**
+     * Crea un nuovo ViewHolder quando non ci sono view esistenti che possono essere riutilizzate.
+     *
+     * @param parent Il ViewGroup a cui questa View verrà aggiunta dopo essere stata legata a un adattatore.
+     * @param viewType Il tipo di vista della nuova View.
+     * @return Un nuovo ViewHolder che contiene una View della lista di elementi.
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SliderViewHolder {
         context = parent.context
         return SliderViewHolder(
@@ -39,6 +54,12 @@ class SliderAdapters(movieResponse: MovieResponse, viewPager2: ViewPager2) :
         )
     }
 
+    /**
+     * Associa i dati a un ViewHolder specifico in una posizione specifica nella lista.
+     *
+     * @param holder Il ViewHolder che deve essere aggiornato per rappresentare il contenuto dell'elemento alla data posizione nella lista.
+     * @param position La posizione dell'elemento nella lista degli elementi dell'adattatore.
+     */
     override fun onBindViewHolder(holder: SliderViewHolder, position: Int) {
 
         holder.setImage(movieList[position].backdropPath)
@@ -57,10 +78,20 @@ class SliderAdapters(movieResponse: MovieResponse, viewPager2: ViewPager2) :
 
     }
 
+    /**
+     * Restituisce il numero totale di elementi nella lista.
+     *
+     * @return Il numero totale di elementi nella lista.
+     */
     override fun getItemCount(): Int {
         return movieList.size
     }
 
+    /**
+     * ViewHolder interno che rappresenta la vista di un singolo elemento nello slider.
+     *
+     * @param itemView La vista dell'elemento.
+     */
     inner class SliderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val imageView: ImageView
 
@@ -68,6 +99,11 @@ class SliderAdapters(movieResponse: MovieResponse, viewPager2: ViewPager2) :
             imageView = itemView.findViewById(R.id.imageSlide)
         }
 
+        /**
+         * Imposta l'immagine del film nello slider.
+         *
+         * @param imageUrl L'URL dell'immagine del film.
+         */
         fun setImage(imageUrl: String) {
 
             val imagepath = TMDB_ImageManager().buildImageUrl(ImageSize.W780,imageUrl)
@@ -81,6 +117,9 @@ class SliderAdapters(movieResponse: MovieResponse, viewPager2: ViewPager2) :
         }
     }
 
+    /**
+     * Runnable che duplica la lista dei film quando raggiunge la fine.
+     */
     private val runnable = Runnable {
         movieList.addAll(movieList)
         notifyDataSetChanged()

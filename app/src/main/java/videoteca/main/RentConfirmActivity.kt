@@ -31,6 +31,10 @@ import videoteca.main.api.TMDB_Manager
 import java.util.Locale
 import kotlin.properties.Delegates
 
+/**
+ * Activity per confermare il noleggio di un film.
+ * Mostra i dettagli del film selezionato e consente all'utente di confermare il noleggio.
+ */
 class RentConfirmActivity : AppCompatActivity() {
     private val tmdbManager = TMDB_Manager()
     private val tmdbImagemanager = TMDB_ImageManager()
@@ -48,6 +52,13 @@ class RentConfirmActivity : AppCompatActivity() {
     private lateinit var datePub:TextView
     private lateinit var backdropMovie:ImageView
     private lateinit var poster:ImageView
+
+    /**
+     * Metodo chiamato alla creazione dell'Activity.
+     * Inizializza le viste e imposta i listener per i pulsanti.
+     *
+     * @param savedInstanceState Bundle contenente lo stato precedente dell'Activity (se presente).
+     */
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +83,7 @@ class RentConfirmActivity : AppCompatActivity() {
 
 
         if (utenteId != null) {
-            btnConfirm.setOnClickListener {
+            btnConfirm.setOnClickListener { //una volta premuto viene nollegiato il titolo
                 db.addRentedMovies(utenteId, idMovie)
                 SharedInfo(this).saveMovieTime(idMovie, 0L)
                 Toast.makeText(this,
@@ -92,7 +103,7 @@ class RentConfirmActivity : AppCompatActivity() {
             this.runOnUiThread {
                 if (movieDetails!=null){
                     //recupero backdrop per imagine di sfondo
-                    Glide.with(this)
+                    Glide.with(this) // uso glide per la gestione dell'imagine di copertina del film e per lo sfondo
                         .load(
                             tmdbImagemanager.buildImageUrl(
                                 PosterSize.W780,

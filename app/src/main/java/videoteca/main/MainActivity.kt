@@ -35,6 +35,8 @@ import kotlin.math.abs
 
        /**
         * imposta la vista dell' l'activity e inizializzazione delle componenti
+        *
+        * @param savedInstanceState Bundle contenente lo stato precedente dell'Activity (se presente).
         */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -141,6 +143,7 @@ import kotlin.math.abs
 
    /**
     * Sostituisce il fragment attuale con uno nuovo.
+    * @param fragment Fragment rapresenta il framento con il quale sostituire l'attuale visualizzato.
     */
    private fun replaceFragment(fragment: Fragment) {
        supportFragmentManager.beginTransaction().replace(R.id.frameLayout, fragment).commit()

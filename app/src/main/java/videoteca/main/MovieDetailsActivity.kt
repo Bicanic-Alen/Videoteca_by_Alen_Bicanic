@@ -36,9 +36,12 @@ import videoteca.main.api.TMDB_Manager
 import java.util.Locale
 import kotlin.properties.Delegates
 
-
+/**
+ * Activity che mostra i dettagli di un film, inclusi attori, generi, e altre informazioni.
+ */
 class MovieDetailsActivity : AppCompatActivity() {
 
+    //management
     private val tmdbManager = TMDB_Manager()
     private val tmdbImagemanager = TMDB_ImageManager()
     private var idMovie by Delegates.notNull<Int>()
@@ -47,6 +50,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     private val db = DatabaseManager()
     private val utenteId = AuthService.getCurrentUser()?.uid
 
+    //views
     private lateinit var tvNoDisp:TextView
     private lateinit var tvTitle:TextView
     private lateinit var backdropMovie: ImageView
@@ -66,11 +70,18 @@ class MovieDetailsActivity : AppCompatActivity() {
     private lateinit var adapterGenres:RecyclerView.Adapter<*>
 
 
+    /**
+     * Metodo chiamato alla creazione dell'Activity.
+     * Inizializza le viste e imposta i listener per i pulsanti.
+     *
+     * @param savedInstanceState Bundle contenente lo stato precedente dell'Activity (se presente).
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_movie_details)
 
+        // Imposta il colore della status bar in base al tema dell'activity
         val statusBarColor = if (isDarkTheme()) {
             ContextCompat.getColor(this, R.color.black)
         } else {
@@ -81,14 +92,16 @@ class MovieDetailsActivity : AppCompatActivity() {
 
         idMovie = intent.getIntExtra("id", 0)
 
-        
+        // Ottieni l'ID del film dalla Intent
         Log.d(TAG, "id movie: $idMovie")
 
+        // Inizializza le view e i RecyclerView
         initView()
 
         val language = currentLocale.language //recupera la lingua del dispositivo (es. "it")
         val languageTag = currentLocale.toLanguageTag()
 
+        // Toolbar con back button
         val toolbarDetails = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarDetails)
         setSupportActionBar(toolbarDetails)
         toolbarDetails.setNavigationOnClickListener {
@@ -96,6 +109,7 @@ class MovieDetailsActivity : AppCompatActivity() {
             onBackPressed() // Per tornare all'activity precedente
         }
 
+        // Configura RecyclerView per attori, generi e film raccomandati
         recyclerViewActors = findViewById<RecyclerView>(R.id.recyclerViewActors)
         recyclerViewActors.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
@@ -117,7 +131,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         recyclerViewGenres.adapter = adapterGenres
 
 
-
+        //vado a verifiche il film sia presente nella raccolta (videoteca) per verificare se disponbile o meno per il noleggio
         db.getVidetecaItem(idMovie){
              runOnUiThread{
                  if(it!=null){
@@ -128,7 +142,7 @@ class MovieDetailsActivity : AppCompatActivity() {
              }
         }
 
-
+        //mi reindirizza sulla pagina di conferma del noleggio
         btnRent.setOnClickListener {
                 val intent = Intent(this, RentConfirmActivity::class.java)
                 intent.putExtra("idMovie", idMovie)
@@ -137,6 +151,7 @@ class MovieDetailsActivity : AppCompatActivity() {
 
 
 
+        //configurazione del tasto like
         tvLike.setOnClickListener{view ->
             if (utenteId != null) {
                 db.getFavMovies(utenteId){
@@ -177,6 +192,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         }
 
 
+        //configurazione del tasto whatchlist
         tvWatchlist.setOnClickListener{view ->
             if (utenteId != null) {
                 db.getWatchlist(utenteId){
@@ -217,7 +233,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         }
 
 
-
+        //recupero le informazioni del film
         tmdbManager.getMovieDetails(idMovie, languageTag) { movieDetails ->
 
             this.runOnUiThread {
@@ -351,6 +367,8 @@ class MovieDetailsActivity : AppCompatActivity() {
                     }
 
 
+                    //estraggo le informazioni relative ai attori che hanno partecipato al film
+
                     tmdbManager.getMovieCredits(idMovie, languageTag) { creditsMovie ->
                         this.runOnUiThread {
                             if (creditsMovie != null) {
@@ -368,7 +386,7 @@ class MovieDetailsActivity : AppCompatActivity() {
 
                     }
 
-
+                    //estraggo le infomazioni sulla lista di film consigliati in base al titolo selezionato
                     tmdbManager.getMovieRecommendations(idMovie, languageTag) { it ->
                         this.runOnUiThread {
                             if (it != null) {
@@ -401,6 +419,10 @@ class MovieDetailsActivity : AppCompatActivity() {
 
 
     }
+
+    /**
+     * Inizializza le view
+     */
     private fun initView() {
         tvTitle =findViewById(R.id.tv_title_details)
         tvTitle.visibility = View.INVISIBLE
@@ -412,6 +434,8 @@ class MovieDetailsActivity : AppCompatActivity() {
         tvPlot = findViewById<TextView>(R.id.tv_summary_content_details)
         tvLike = findViewById<TextView>(R.id.tv_like_details)
         tvNoDisp = findViewById<TextView>(R.id.tv_contNoAv)
+
+        //gestione tasto preferiti
         if (utenteId != null) {
             db.getFavMovies(utenteId){
                 val isFav = idMovie in it
@@ -432,6 +456,8 @@ class MovieDetailsActivity : AppCompatActivity() {
 
         btnRent = findViewById<Button>(R.id.btn_rent)
 
+        //gestione del tasto whatchlist
+
         if (utenteId != null) {
             db.getWatchlist(utenteId){
                 val isFav = idMovie in it
@@ -446,6 +472,8 @@ class MovieDetailsActivity : AppCompatActivity() {
                     }
                 }
             }
+
+            //gestione se il titolo gia stato nollegiato o meno
             db.getRentedMovies(utenteId){
                 var flag = false
                 for (item in it){
@@ -478,16 +506,34 @@ class MovieDetailsActivity : AppCompatActivity() {
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
     }
 
+    /**
+     * Formatta un numero a virgola mobile con una cifra decimale.
+     *
+     * @param number Il numero da formattare.
+     * @return Una stringa formattata con una cifra decimale.
+     */
     fun limitToOneDecimalPlace(number: Double): String {
         // Utilizza String.format con il modello "%.1f" per formattare il double con una cifra decimale
         return String.format("%.1f", number)
     }
+
+    /**
+     * Verifica se il tema dell'applicazione è impostato su tema scuro.
+     *
+     * @return True se il tema dell'applicazione è scuro, False altrimenti.
+     */
 
     private fun isDarkTheme(): Boolean {
         val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         return mode == Configuration.UI_MODE_NIGHT_YES
     }
 
+
+    /**
+     * Mostra un messaggio toast con il messaggio specificato.
+     *
+     * @param message Il messaggio da mostrare nel toast.
+     */
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }

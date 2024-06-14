@@ -14,6 +14,11 @@ import videoteca.main.api.TMDB_ImageManager
 import videoteca.main.api.TMDB_Manager
 import java.util.Locale
 
+
+/**
+ * Activity per la ricerca di film utilizzando l'API TMDB.
+ * Mostra i risultati della ricerca in un RecyclerView.
+ */
 class SearchActivity : AppCompatActivity() {
 
     private val tmdbManager = TMDB_Manager()
@@ -23,6 +28,13 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var adapterSearch:SearchMovieAdapter
     private lateinit var recyclerViewSearch:RecyclerView
+
+    /**
+     * Metodo chiamato alla creazione dell'Activity.
+     * Inizializza le viste e imposta la funzionalità di ricerca.
+     *
+     * @param savedInstanceState Bundle contenente lo stato precedente dell'Activity (se presente).
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -35,7 +47,7 @@ class SearchActivity : AppCompatActivity() {
             onBackPressed() // Per tornare all'activity precedente
         }
 
-        val languageTag = currentLocale.toLanguageTag()
+        val languageTag = currentLocale.toLanguageTag() //preno il tag della lingua
 
         adapterSearch = SearchMovieAdapter(MovieResponse().results)
         recyclerViewSearch = findViewById(R.id.recyclerView_search)
@@ -45,7 +57,7 @@ class SearchActivity : AppCompatActivity() {
 
 
         val tvSearch = findViewById<EditText>(R.id.etv_search_search)
-        tvSearch.addTextChangedListener{
+        tvSearch.addTextChangedListener{ //come viene scritto un input, si aggiorna la ricerca
             tmdbManager.searchMovie(tvSearch.text.toString(), languageTag){
                 this.runOnUiThread{
                     if(it!=null){

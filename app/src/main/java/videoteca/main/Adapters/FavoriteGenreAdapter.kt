@@ -16,18 +16,35 @@ import videoteca.main.R
 import videoteca.main.api.AuthService
 import videoteca.main.api.DatabaseManager
 
-
+/**
+ * Adapter per gestire l'elenco dei generi preferiti dell'utente.
+ *
+ * @param items Lista dei generi da visualizzare.
+ */
 class FavoriteGenreAdapter(private val items: GenreList): RecyclerView.Adapter<FavoriteGenreAdapter.ViewHolder>() {
 
     private var context: Context? = null
     private val TAG = "GenreAdapter"
 
+    /**
+     * Crea un nuovo ViewHolder quando non ci sono viste esistenti che possono essere riutilizzate.
+     *
+     * @param parent Il ViewGroup nel quale la nuova View sarà aggiunta dopo essere stata associata a una posizione dell'adattatore.
+     * @param viewType Il tipo di vista della nuova View.
+     * @return Un nuovo ViewHolder che contiene una View del tipo di vista fornito.
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteGenreAdapter.ViewHolder {
         context = parent.context
         val inflate = LayoutInflater.from(parent.context).inflate(R.layout.viewholder_genres_fav, parent, false)
         return ViewHolder(inflate)
     }
 
+    /**
+     * Associa i dati di un determinato elemento alla posizione specificata nella RecyclerView.
+     *
+     * @param holder Il ViewHolder che deve essere aggiornato per rappresentare il contenuto dell'elemento nella posizione data nel set di dati.
+     * @param position La posizione dell'elemento nel set di dati dell'adattatore.
+     */
     override fun onBindViewHolder(holder: FavoriteGenreAdapter.ViewHolder, position: Int) {
         holder.textView.text = items.genres.get(position).name
         val idGenre = items.genres[position].id
@@ -69,10 +86,20 @@ class FavoriteGenreAdapter(private val items: GenreList): RecyclerView.Adapter<F
 
     }
 
+    /**
+     * Restituisce il numero totale di elementi nell'elenco dei generi.
+     *
+     * @return Il numero totale di generi nel set di dati.
+     */
     override fun getItemCount(): Int {
         return items.genres.size
     }
 
+    /**
+     * ViewHolder per contenere e gestire le viste degli elementi dell'elenco dei generi.
+     *
+     * @param itemView La vista radice che rappresenta un elemento dell'elenco.
+     */
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textView: TextView
         init {

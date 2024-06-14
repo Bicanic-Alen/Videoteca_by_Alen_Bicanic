@@ -14,6 +14,11 @@ import videoteca.main.api.DatabaseManager
 import videoteca.main.api.TMDB_Manager
 import java.util.Locale
 
+/**
+ * Activity che mostra i generi cinematografici preferiti dell'utente.
+ * Mostra una lista di generi preferiti in una RecyclerView.
+ */
+
 class GenresFavoriteActivity : AppCompatActivity() {
 
     private lateinit var favAdapter: FavoriteGenreAdapter
@@ -23,6 +28,13 @@ class GenresFavoriteActivity : AppCompatActivity() {
     private val tmdbManager = TMDB_Manager()
     private var TAG = "GenresFavoriteActivity"
     private val currentLocale: Locale = Locale.getDefault()
+
+    /**
+     * Metodo chiamato quando l'Activity viene creata.
+     * Inizializza l'interfaccia utente e recupera i generi dal TMDB per popolare l'adapter della RecyclerView.
+     *
+     * @param savedInstanceState Bundle contenente lo stato precedente dell'Activity (se presente).
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -61,6 +73,14 @@ class GenresFavoriteActivity : AppCompatActivity() {
 
 
     }
+
+
+    /**
+     * Metodo chiamato quando l'Activity viene creata.
+     * Inizializza l'interfaccia utente e recupera i generi dal TMDB per popolare l'adapter della RecyclerView.
+     *
+     * @param savedInstanceState Bundle contenente lo stato precedente dell'Activity (se presente).
+     */
     private fun isDarkTheme(): Boolean {
         val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         return mode == Configuration.UI_MODE_NIGHT_YES

@@ -18,6 +18,11 @@ import videoteca.main.Domain.Movie.MovieResponseRecommended
 
 import kotlin.Exception
 
+/**
+ * Classe che gestisce l'interazione con l'API di The Movie Database (TMDB).
+ * Fornisce metodi per ottenere informazioni sui film, come film popolari, film più votati, dettagli dei film, immagini e altro.
+ * Utilizza OkHttpClient per effettuare richieste HTTP e Gson per deserializzare le risposte JSON.
+ */
 class TMDB_Manager {
 
     private val client = OkHttpClient()
@@ -27,6 +32,11 @@ class TMDB_Manager {
     private val apiKey = "94610c56d8ca01615eb4c8ad88a59d79"
     private val accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5NDYxMGM1NmQ4Y2EwMTYxNWViNGM4YWQ4OGE1OWQ3OSIsInN1YiI6IjY2MWQ5ZGEwNTI4YjJlMDE2NDNlNDA3ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.7lBtujdrJbwjditULHEySQ3zrF80lSsQz8JKAwYos7U"
 
+    /**
+     * Ottiene i film da scoprire in base alla lingua.
+     * @param language La lingua in cui ottenere i film.
+     * @param callback La funzione di callback da eseguire quando la risposta è pronta.
+     */
     fun getMovieDiscover(language: String, callback: (MovieResponse?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getMovieDiscoverAsync(language)
@@ -35,6 +45,13 @@ class TMDB_Manager {
         }
     }
 
+    /**
+     * Ottiene i film da scoprire in base alla lingua, al genere e alla pagina.
+     * @param language La lingua in cui ottenere i film.
+     * @param genreId L'ID del genere del film.
+     * @param page La pagina dei risultati.
+     * @param callback La funzione di callback da eseguire quando la risposta è pronta.
+     */
     fun getMovieDiscover(language: String, genreId: Int, page: Int,callback: (MovieResponse?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getMovieDiscoverAsync(language, genreId, page)
@@ -43,6 +60,14 @@ class TMDB_Manager {
         }
     }
 
+
+    /**
+     * Ottiene i film da scoprire in base alla lingua, alla lista dei generi e alla pagina.
+     * @param language La lingua in cui ottenere i film.
+     * @param genreIdList La lista degli ID dei generi del film.
+     * @param page La pagina dei risultati.
+     * @param callback La funzione di callback da eseguire quando la risposta è pronta.
+     */
     fun getMovieDiscover(language: String, genreIdList: List<Int>, page: Int,callback: (MovieResponse?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getMovieDiscoverAsync(language, genreIdList, page)
@@ -51,6 +76,13 @@ class TMDB_Manager {
         }
     }
 
+
+
+    /**
+     * Ottiene i film popolari in base alla lingua.
+     * @param language La lingua in cui ottenere i film.
+     * @param callback La funzione di callback da eseguire quando la risposta è pronta.
+     */
     fun getMoviePopular(language: String, callback: (MovieResponse?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getMoviePopularAsync(language)
@@ -59,6 +91,11 @@ class TMDB_Manager {
         }
     }
 
+    /**
+     * Ottiene i film più votati in base alla lingua.
+     * @param language La lingua in cui ottenere i film.
+     * @param callback La funzione di callback da eseguire quando la risposta è pronta.
+     */
     fun getMovieTopRated(language: String, callback: (MovieResponse?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getMovieTopRatedAsync(language)
@@ -68,6 +105,11 @@ class TMDB_Manager {
     }
 
 
+    /**
+     * Ottiene i film in uscita in base alla lingua.
+     * @param language La lingua in cui ottenere i film.
+     * @param callback La funzione di callback da eseguire quando la risposta è pronta.
+     */
     fun getMovieUpcomming(language: String, callback: (MovieResponse?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getMovieUpcommingAsync(language)
@@ -77,6 +119,12 @@ class TMDB_Manager {
     }
 
 
+    /**
+     * Ottiene le immagini di un film in base all'ID del film e alla lingua.
+     * @param movieId L'ID del film.
+     * @param language La lingua delle immagini.
+     * @param callback La funzione di callback da eseguire quando la risposta è pronta.
+     */
     fun getMovieImage(movieId: Int, language: String, callback: (MovieImages?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getMovieImageAsync(movieId, language)
@@ -85,6 +133,12 @@ class TMDB_Manager {
     }
 
 
+    /**
+     * Ottiene i dettagli di un film in base all'ID del film e alla lingua.
+     * @param movieId L'ID del film.
+     * @param language La lingua dei dettagli.
+     * @param callback La funzione di callback da eseguire quando la risposta è pronta.
+     */
     fun getMovieDetails(movieId: Int, language: String, callback: (MovieDetails?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getMovieDetailsAsync(movieId, language)
@@ -92,6 +146,12 @@ class TMDB_Manager {
         }
     }
 
+    /**
+     * Ottiene i crediti di un film in base all'ID del film e alla lingua.
+     * @param movieId L'ID del film.
+     * @param language La lingua dei crediti.
+     * @param callback La funzione di callback da eseguire quando la risposta è pronta.
+     */
     fun getMovieCredits(movieId: Int, language: String, callback: (CreditsMovie?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getMovieCreditsAsync(movieId, language)
@@ -99,7 +159,12 @@ class TMDB_Manager {
         }
     }
 
-    //Recommendations
+    /**
+     * Ottiene i film consigliati in base all'ID del film e alla lingua.
+     * @param movieId L'ID del film.
+     * @param language La lingua dei film consigliati.
+     * @param callback La funzione di callback da eseguire quando la risposta è pronta.
+     */
     fun getMovieRecommendations(movieId : Int,language: String, callback: (MovieResponseRecommended?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getMovieRecommendationsAsync(movieId, language)
@@ -108,6 +173,11 @@ class TMDB_Manager {
         }
     }
 
+    /**
+     * Ottiene i generi disponibili in base alla lingua.
+     * @param language La lingua dei generi.
+     * @param callback La funzione di callback da eseguire quando la risposta è pronta.
+     */
     fun getGenres(language: String, callback: (GenreList?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = getGenresAsync(language)
@@ -116,6 +186,12 @@ class TMDB_Manager {
         }
     }
 
+    /**
+     * Cerca un film in base alla query e alla lingua.
+     * @param query La query di ricerca.
+     * @param language La lingua dei risultati di ricerca.
+     * @param callback La funzione di callback da eseguire quando la risposta è pronta.
+     */
     fun searchMovie(query:String, language: String, callback: (MovieResponse?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = searchMovieAsync(query,language)
@@ -125,6 +201,7 @@ class TMDB_Manager {
     }
 
 
+    // Metodo privato per cercare un film in modo asincrono
     private fun searchMovieAsync(query: String, language: String): MovieResponse? {
         return try {
             val client = OkHttpClient()
@@ -147,6 +224,7 @@ class TMDB_Manager {
     }
 
 
+    // Metodo privato per ottenere i generi in modo asincrono
     private suspend fun getGenresAsync(language:String):GenreList?{
         return try{
             val client = OkHttpClient()
@@ -172,6 +250,7 @@ class TMDB_Manager {
         }
     }
 
+    // Metodo privato per ottenere i film consigliati in modo asincrono
     private suspend fun getMovieRecommendationsAsync(movieId: Int, language: String): MovieResponseRecommended? {
         return try {
             val client = OkHttpClient()
@@ -194,6 +273,7 @@ class TMDB_Manager {
     }
 
 
+    // Metodo privato per ottenere i film da scoprire in base al genere e alla pagina in modo asincrono
     private suspend fun getMovieDiscoverAsync(language: String, genreId: Int, page:Int): MovieResponse? {
         return try {
             val client = OkHttpClient()
@@ -216,6 +296,7 @@ class TMDB_Manager {
         }
     }
 
+    // Metodo privato per ottenere i film da scoprire in base alla lista dei generi e alla pagina in modo asincrono
     private suspend fun getMovieDiscoverAsync(language: String, genreIdList: List<Int>, page:Int): MovieResponse? {
         return try {
 
@@ -248,6 +329,7 @@ class TMDB_Manager {
         }
     }
 
+    // Metodo privato per ottenere i film popolari in modo asincrono
     private suspend fun getMoviePopularAsync(language: String): MovieResponse? {
         return try {
             val client = OkHttpClient()
@@ -271,6 +353,7 @@ class TMDB_Manager {
         }
     }
 
+    // Metodo privato per ottenere i film da scoprire in base alla lingua in modo asincrono
     private suspend fun getMovieDiscoverAsync(language: String): MovieResponse? {
         return try {
             val request = Request.Builder()
@@ -291,6 +374,7 @@ class TMDB_Manager {
         }
     }
 
+    // Metodo privato per ottenere i film più votati in modo asincrono
     private suspend fun getMovieTopRatedAsync(language: String): MovieResponse? {
         return try {
             val client = OkHttpClient()
@@ -314,6 +398,7 @@ class TMDB_Manager {
     }
 
 
+    // Metodo privato per ottenere i film in arrivo in modo asincrono
     private suspend fun getMovieUpcommingAsync(language: String): MovieResponse? {
         return try {
             val client = OkHttpClient()
@@ -336,6 +421,7 @@ class TMDB_Manager {
         }
     }
 
+    // Metodo privato per ottenere le immagini di un film in modo asincrono
     private suspend fun getMovieImageAsync(movieId: Int, language: String): MovieImages? {
         return try {
             val request = Request.Builder()
@@ -361,7 +447,7 @@ class TMDB_Manager {
     }
 
 
-
+    // Metodo privato per ottenere i dettagli di un film in modo asincrono
     private suspend fun getMovieDetailsAsync(movieId: Int, language: String): MovieDetails? {
         return try {
             val client = OkHttpClient()
@@ -390,6 +476,7 @@ class TMDB_Manager {
     }
 
 
+    // Metodo privato per ottenere i crediti di un film in modo asincrono
     private suspend fun getMovieCreditsAsync(movieId: Int, language:String): CreditsMovie?{
 
         return try{

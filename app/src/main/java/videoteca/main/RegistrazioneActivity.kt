@@ -17,6 +17,11 @@ import videoteca.main.Domain.UserDB
 import java.text.SimpleDateFormat
 import java.util.*
 
+
+/**
+ * Activity per la registrazione di un nuovo utente.
+ * Gestisce l'interfaccia utente per la registrazione e salva i dati dell'utente nel database.
+ */
 class RegistrazioneActivity : AppCompatActivity() {
     private lateinit var etvName:String
     private lateinit var etvSurname:String
@@ -27,6 +32,14 @@ class RegistrazioneActivity : AppCompatActivity() {
     private val auth = Firebase.auth
     private val TAG = "RegistrazioneActivity"
     private lateinit var sharedInfo:SharedInfo
+
+    /**
+     * Metodo chiamato alla creazione dell'Activity.
+     * Inizializza le viste e imposta i listener per i pulsanti.
+     *
+     * @param savedInstanceState Bundle contenente lo stato precedente dell'Activity (se presente).
+     */
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -99,6 +112,14 @@ class RegistrazioneActivity : AppCompatActivity() {
         }
 
     }
+
+
+    /**
+     * Converte una stringa di data in un oggetto Timestamp di Firebase.
+     *
+     * @param dateString La stringa della data nel formato "dd/MM/yyyy".
+     * @return Un oggetto Timestamp rappresentante la data, o il timestamp corrente in caso di errore.
+     */
 
     fun dateToTimestamp(dateString: String): Timestamp {
         // Imposta il formato desiderato della data

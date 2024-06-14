@@ -10,6 +10,10 @@ import videoteca.main.Adapters.TwoMoviesForRowAdapter
 import videoteca.main.api.TMDB_Manager
 import java.util.Locale
 
+/**
+ * Activity che mostra elenco di film correlati a un genere specifico.
+ * Mostra una lista di film in una RecyclerView, utilizzando un adapter personalizzato.
+ */
 class GenresActivity : AppCompatActivity() {
 
     private val tmdbManager = TMDB_Manager()
@@ -17,6 +21,14 @@ class GenresActivity : AppCompatActivity() {
     private lateinit var recyclerViewTwoMoviesForRow:RecyclerView
     private lateinit var adapterTwoMoviesForRowAdapter: TwoMoviesForRowAdapter
 
+    /**
+     * Metodo chiamato quando l'Activity viene creata.
+     * Inizializza l'interfaccia utente, imposta la Toolbar e recupera l'ID del genere dall'intent.
+     * Recupera quindi il nome del genere corrispondente e lo imposta come titolo della Toolbar.
+     * Inizializza la RecyclerView per mostrare i film e recupera i film dal TMDB per il genere specificato.
+     *
+     * @param savedInstanceState Bundle contenente lo stato precedente dell'Activity (se presente).
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -33,12 +45,14 @@ class GenresActivity : AppCompatActivity() {
             onBackPressed()
         }
 
+
+        //recupero dei generi
         tmdbManager.getGenres(language){it->
             this.runOnUiThread{
                 if(it!=null){
                     for (genre in it.genres){
-                        if(genre.id == idGenres){
-                            toolbar.title = genre.name
+                        if(genre.id == idGenres){ //trovo una corrispondeza tra id passato al intent e l'elenco dei geniri del'api
+                            toolbar.title = genre.name //imposto il nome del genere alla toolbar
                             break
                         }
                     }
@@ -54,6 +68,7 @@ class GenresActivity : AppCompatActivity() {
 
         var page:Int = 1
 
+        //recupero dei film
 
         tmdbManager.getMovieDiscover(languageTag, idGenres, page){it->
             this.runOnUiThread{
@@ -63,10 +78,6 @@ class GenresActivity : AppCompatActivity() {
                 }
             }
         }
-
-
-
-
 
     }
 }

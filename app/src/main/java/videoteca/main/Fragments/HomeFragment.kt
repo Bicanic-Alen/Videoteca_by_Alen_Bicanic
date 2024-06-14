@@ -29,6 +29,11 @@ import java.util.Locale
 import kotlin.math.abs
 
 
+/**
+ * Fragment principale che gestisce la schermata home dell'applicazione.
+ * Mostra una ViewPager per i banner dei film, e RecyclerViews per i film top rated, popolari, in arrivo,
+ * i generi consigliati e i film raccomandati in base ai generi preferiti dell'utente.
+ */
 class HomeFragment : Fragment() {
 
 
@@ -56,6 +61,16 @@ class HomeFragment : Fragment() {
     private val languageTag: String = currentLocale.toLanguageTag()  //Restituisce il tag della lingua
 
 
+    /**
+     * Metodo chiamato quando il Fragment crea la vista dell'interfaccia utente.
+     * Infla il layout per il fragment e inizializza i componenti della UI come ViewPager2 e RecyclerViews.
+     * Imposta gli adapter per le RecyclerViews e avvia il metodo per caricare i dati dei film e dei generi.
+     *
+     * @param inflater Il layout inflater utilizzato per inflare il layout del fragment.
+     * @param container Il contenitore padre in cui il fragment viene inserito.
+     * @param savedInstanceState Lo stato salvato del fragment, se disponibile.
+     * @return La vista radice del fragment.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -64,6 +79,15 @@ class HomeFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
+
+    /**
+     * Metodo chiamato dopo che la vista è stata creata.
+     * Configura ViewPager2 e RecyclerViews, imposta gli adapter e avvia il caricamento dei dati dei film e dei generi.
+     * Gestisce la visibilità delle ProgressBar durante il caricamento.
+     *
+     * @param view La vista radice del fragment.
+     * @param savedInstanceState Lo stato salvato del fragment, se disponibile.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
         viewPager2 = view.findViewById(R.id.viewPager2)
@@ -119,6 +143,8 @@ class HomeFragment : Fragment() {
         adapterGenres = GenreAdapter(GenreList())
         recyclerViewGenres.adapter = adapterGenres
 
+
+        //carica i film popolari
         tmdbApiManager.getMoviePopular(language = languageTag) { movieResponse ->
             activity?.runOnUiThread { //entro del thread pricipale
                 if (movieResponse != null && activity != null && isAdded) {
@@ -132,6 +158,7 @@ class HomeFragment : Fragment() {
             }
         }
 
+        //carica i generi
         tmdbApiManager.getGenres(language){it->
             activity?.runOnUiThread{
                 if(it!=null){
@@ -147,6 +174,7 @@ class HomeFragment : Fragment() {
         }
 
 
+        //carica i top rated dei film
         tmdbApiManager.getMovieTopRated(language = languageTag) { movieResponse ->
             activity?.runOnUiThread { //entro del thread pricipale
                 if (movieResponse != null && activity != null && isAdded) {
@@ -160,6 +188,8 @@ class HomeFragment : Fragment() {
             }
         }
 
+
+        //carica i film in arrivo
         tmdbApiManager.getMovieUpcomming(language = languageTag) { movieResponse ->
             activity?.runOnUiThread { //entro del thread pricipale
                 if (movieResponse != null && activity != null && isAdded) {
@@ -173,6 +203,8 @@ class HomeFragment : Fragment() {
             }
         }
 
+
+        //carica i film da scoprire in base ai gusti del utente
         AuthService.getCurrentUser()?.let {
             DatabaseManager().getFavoriteGenres(it.uid){genreList->
                 if (genreList != null) {
@@ -201,6 +233,13 @@ class HomeFragment : Fragment() {
 
     }
 
+    /*
+     * (slider di film in primo piano)
+     * Metodo per configurare la ViewPager2 con i banner dei film.
+     * Carica i banner dei film utilizzando un adapter personalizzato.
+     * Configura trasformazioni per i margini e le dimensioni delle pagine.
+     * Avvia un gestore per la navigazione automatica tra i banner.
+     */
     private fun banners(){
         tmdbApiManager.getMovieDiscover(languageTag){ movieResponse ->
             activity?.runOnUiThread {
@@ -233,11 +272,19 @@ class HomeFragment : Fragment() {
 
     private val sliderRunnable = java.lang.Runnable { viewPager2.setCurrentItem(viewPager2.getCurrentItem() + 1) }
 
+    /**
+     * Metodo chiamato quando il Fragment va in pausa.
+     * Rimuove il callback per il cambio automatico delle slide della ViewPager2.
+     */
     override fun onPause() {
         super.onPause()
         sliderHandler.removeCallbacks(sliderRunnable)
     }
 
+    /**
+     * Metodo chiamato quando il Fragment torna in primo piano dopo essere stato in pausa.
+     * Riavvia il callback per il cambio automatico delle slide della ViewPager2 dopo un ritardo di 2000 millisecondi.
+     */
     override fun onResume() {
         super.onResume()
         sliderHandler.postDelayed(sliderRunnable,2000)

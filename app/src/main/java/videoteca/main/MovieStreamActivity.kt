@@ -39,6 +39,10 @@ import kotlin.properties.Delegates
 private const val USE_TEXTURE_VIEW = true
 private const val ENABLE_SUBTITLES = true
 
+/**
+ * Activity per lo streaming di un film.
+ * Gestisce la riproduzione del film utilizzando il player VLC.
+ */
 class MovieStreamActivity : AppCompatActivity() {
 
     //API
@@ -80,6 +84,12 @@ class MovieStreamActivity : AppCompatActivity() {
     private var foundSubtitleTracls = false
 
 
+    /**
+     * Metodo chiamato alla creazione dell'Activity.
+     * Inizializza le viste e imposta i listener per i pulsanti.
+     *
+     * @param savedInstanceState Bundle contenente lo stato precedente dell'Activity (se presente).
+     */
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -192,8 +202,9 @@ class MovieStreamActivity : AppCompatActivity() {
                             }
                         }
 
+                        //TMCH
                         override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-
+                        //TMCH
                         override fun onStopTrackingTouch(seekBar: SeekBar?) {}
                     })
 
@@ -235,6 +246,7 @@ class MovieStreamActivity : AppCompatActivity() {
                                     window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                                 }
 
+                                //gestione traccie audio e sottotitoli
                                 var audioTracks:List<MediaPlayer.TrackDescription>
                                 audioTracks= emptyList()
                                 if( mediaPlayer.audioTracks!=null){
@@ -247,9 +259,6 @@ class MovieStreamActivity : AppCompatActivity() {
                                     subtitleTracks = mediaPlayer.spuTracks.toList()
                                     foundSubtitleTracls = true
                                 }
-
-
-
 
                                 if(foundAudioTracks) {
                                     ivSubLang.setOnClickListener {
@@ -329,22 +338,23 @@ class MovieStreamActivity : AppCompatActivity() {
             }
         }
 
+        //imposta il contenuto video al inizio
         btnRestart.setOnClickListener{
             mediaPlayer.time = 0L
         }
 
-
-
+        //fa avanzare il contenuto video di 10sec
         ivSkip10.setOnClickListener {
             mediaPlayer.time += 10000
         }
 
-
+        //fa tornare il contenuto video indietro di 10sec
         ivBack10.setOnClickListener {
             mediaPlayer.time -= 10000
         }
 
 
+        //fa tornora alla pagina dei titoli nollegiati
         ivBackRent.setOnClickListener {
             flagBack = true
             onBackPressed()
@@ -353,14 +363,25 @@ class MovieStreamActivity : AppCompatActivity() {
     }
 
 
+    /**
+     * Mostra i pulsanti dell'interfaccia utente.
+     */
     private fun showButtons() {
         btnsPlayerLayout.visibility = View.VISIBLE
     }
 
+    /**
+     * Nasconde i pulsanti dell'interfaccia utente.
+     */
     private fun hideButtons(){
         btnsPlayerLayout.visibility = View.GONE
     }
 
+    /**
+     * Recupera il path del film da firebase.
+     *
+     * @return Il dettaglio del film recuperato.
+     */
     private suspend fun getMoviePath(): Videoteca? {
         return suspendCoroutine { continuation ->
             db.getVidetecaItem(movieid) { videoteca ->
@@ -369,6 +390,12 @@ class MovieStreamActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Converte millisecondi in formato ore:minuti:secondi.
+     *
+     * @param millisecondi Il tempo in millisecondi da convertire.
+     * @return La stringa nel formato ore:minuti:secondi.
+     */
     fun millisecondiToTempoString(millisecondi: Long): String {
         val ore = millisecondi / 3600000
         val minuti = (millisecondi % 3600000) / 60000
@@ -378,16 +405,37 @@ class MovieStreamActivity : AppCompatActivity() {
     }
 
 
+    /**
+     * Salvataggio dello stato dell'Activity prima che venga distrutta o ricreata.
+     *
+     * @param outState Oggetto Bundle in cui salvare lo stato corrente.
+     */
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putLong("savedPosition", savedPosition)
     }
 
+
+    /**
+     * Ripristino dello stato dell'Activity dopo che è stata distrutta e ricreata.
+     *
+     * @param savedInstanceState Oggetto Bundle contenente lo stato salvato.
+     */
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         savedPosition = savedInstanceState.getLong("savedPosition")
     }
 
+
+    /**
+     * Mostra un dialog per la selezione delle tracce audio e sottotitoli.
+     *
+     * @param audioTrackOptions Opzioni delle tracce audio disponibili.
+     * @param subtitleOptions Opzioni dei sottotitoli disponibili.
+     * @param mediaPlayer Il MediaPlayer utilizzato per la riproduzione.
+     * @param onAudioSelected Callback per l'audio selezionato.
+     * @param onSubtitleSelected Callback per i sottotitoli selezionati.
+     */
     fun showAudioAndSubtitleSelectionDialog(
         audioTrackOptions: List<MediaPlayer.TrackDescription>,
         subtitleOptions: List<MediaPlayer.TrackDescription>,
@@ -454,6 +502,11 @@ class MovieStreamActivity : AppCompatActivity() {
             .show()
     }
 
+    /**
+     * Metodo chiamato quando l'Activity viene messa in pausa.
+     * Salva la posizione attuale del film e mette in pausa la riproduzione.
+     */
+
     override fun onPause() {
         super.onPause()
         Log.i(TAG, "sono in onPause")
@@ -467,6 +520,10 @@ class MovieStreamActivity : AppCompatActivity() {
         savedPosition = mediaPlayer.time
     }
 
+    /**
+     * Metodo chiamato quando l'Activity viene fermata.
+     * Gestisce il comportamento specifico per dispositivi Xiaomi/Redmi.
+     */
     override fun onStop() {
         super.onStop()
 
@@ -484,7 +541,10 @@ class MovieStreamActivity : AppCompatActivity() {
 
     }
 
-
+    /**
+     * Metodo chiamato quando l'Activity viene distrutta.
+     * Rilascia le risorse del MediaPlayer e del LibVLC.
+     */
     override fun onDestroy() {
         super.onDestroy()
         if (::mediaPlayer.isInitialized) {

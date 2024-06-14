@@ -16,12 +16,24 @@ import kotlinx.coroutines.launch
 import videoteca.main.api.AuthService
 import videoteca.main.api.DatabaseManager
 
+/**
+ * La seguente Activity è responsabile per la gestione del login degli utenti.
+ * Gestisce l'autenticazione tramite AuthService e il salvataggio delle informazioni
+ * dell'utente tramite SharedInfo.
+ */
 
 class LoginActivity : AppCompatActivity() {
 
     private val mainScope = MainScope()
     private lateinit var sharedInfo:SharedInfo
 
+
+    /**
+     * Metodo chiamato quando l'Activity viene creata.
+     * Inizializza l'interfaccia utente e imposta i listener per i pulsanti di login,
+     * ripristino password e registrazione.
+     * @param savedInstanceState Bundle contenente lo stato precedente dell'Activity (se presente).
+     */
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +52,15 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Gestisce le azioni associate ai click sugli elementi dell'interfaccia utente.
+     * - Effettua il login dell'utente se viene cliccato il pulsante di login.
+     * - Apre l'Activity per il ripristino password se viene cliccato il link di ripristino.
+     * - Opre l'Activity per la registrazione se viene cliccato il link di registrazione.
+     *
+     * @param p0 View su cui è stato eseguito il click.
+     */
+
     private fun onclickAction(p0 : View?){
         if(p0 != null){
             if(p0.id == R.id.btn_login){
@@ -57,6 +78,7 @@ class LoginActivity : AppCompatActivity() {
                                 Log.d("UserAreaFragment", "name = ${user.name}")
                                 Log.d("UserAreaFragment", "surname = ${user.surname}")
 
+                                //salvo le infotmazioni del utente
                                 sharedInfo.saveUserData(user.name, user.surname, currentUser.uid)
                             }
                         }
@@ -83,6 +105,10 @@ class LoginActivity : AppCompatActivity() {
 
 
 
+    /**
+     * Metodo chiamato quando l'Activity viene distrutta.
+     * Chiude il CoroutineScope principale per evitare memory leak.
+     */
 
     override fun onDestroy() {
         super.onDestroy()

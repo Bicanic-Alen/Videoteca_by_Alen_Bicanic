@@ -20,6 +20,9 @@ import videoteca.main.api.DatabaseManager
 import videoteca.main.api.TMDB_Manager
 import java.util.Locale
 
+/**
+ * Fragment che gestisce la visualizzazione dei film preferiti dell'utente.
+ */
 
 class FavFragment : Fragment() {
 
@@ -34,6 +37,15 @@ class FavFragment : Fragment() {
     private lateinit var tvAlert: TextView
     private val utenteId = AuthService.getCurrentUser()?.uid
 
+    /**
+     * Metodo chiamato per creare la vista del fragment.
+     * Infla il layout XML associato a questo fragment.
+     *
+     * @param inflater Il LayoutInflater che può essere utilizzato per inflare qualsiasi layout XML.
+     * @param container Il contenitore padre in cui viene inserito il fragment.
+     * @param savedInstanceState Dati dell'istanza precedente del fragment salvati.
+     * @return La vista radice del fragment.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,6 +54,13 @@ class FavFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_fav, container, false)
     }
 
+    /**
+     * Metodo chiamato subito dopo che onCreateView() è stato chiamato per la prima volta.
+     * Inizializza le visualizzazioni e aggiorna la lista dei film preferiti.
+     *
+     * @param view La vista creata in onCreateView().
+     * @param savedInstanceState Dati dell'istanza precedente del fragment salvati.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
 
         recyclerViewFavMovies = view.findViewById(R.id.recyclerView_favoritemovie)
@@ -55,6 +74,10 @@ class FavFragment : Fragment() {
         updateFavoriteMoviesList()
     }
 
+    /**
+     * Metodo chiamato quando il fragment torna in primo piano dopo essere stato in pausa.
+     * Aggiorna la lista dei film preferiti.
+     */
     override fun onResume() {
         super.onResume()
         loading.visibility = View.VISIBLE
@@ -62,6 +85,11 @@ class FavFragment : Fragment() {
         updateFavoriteMoviesList()
     }
 
+    /*
+     * Metodo per aggiornare la lista dei film preferiti dell'utente.
+     * Ottiene i dettagli dei film preferiti dall'API TMDB e aggiorna l'adapter della RecyclerView.
+     * Mostra un messaggio se non ci sono film preferiti o se si verifica un errore nel recupero dei dati.
+     */
     private fun updateFavoriteMoviesList() {
         if (utenteId != null) {
             db.getFavMovies(utenteId) { favMovie ->

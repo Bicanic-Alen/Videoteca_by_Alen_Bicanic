@@ -368,6 +368,12 @@ class DatabaseManager {
     }
 
 
+    /**
+     * rimuove una lista di film dai nollegiati
+     * @param idu id del utente
+     * @param movieIds lista dei id (interi) dei film da rimuovere
+     */
+
     fun removeRentedMovie(uid: String, movieIds: List<Int>, callback: (Boolean) -> Unit) {
         val userDocumentReference = usersCollection.document(uid)
 
@@ -399,6 +405,10 @@ class DatabaseManager {
             }
     }
 
+    /**
+     * verifica che i titoli non siano scaduti se ci sono titoli scaduti nel elenco dei film
+     * nollegiati li rimuove.
+     */
 
      fun checkFilmRentedValidity(){
         val uid = AuthService.getCurrentUser()?.uid

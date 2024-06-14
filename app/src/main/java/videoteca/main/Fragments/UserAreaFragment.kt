@@ -38,6 +38,7 @@ class UserAreaFragment : Fragment() {
         val tvLogout = view.findViewById<TextView>(R.id.tv_logout)
         tvLogout.setOnClickListener {
             AuthService.logout()
+            sharedInfo.clearUserData()
             val intent = Intent(requireActivity(), LoginActivity::class.java)
             startActivity(intent)
             requireActivity().finish()

@@ -24,6 +24,10 @@ import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
 
+/**
+ * Activity per visualizzare i film noleggiati dall'utente.
+ * Mostra una lista di film noleggiati con i dettagli come titolo, copertina e data di scadenza del noleggio.
+ */
 class MovieRentedActivity : AppCompatActivity() {
 
     private val db = DatabaseManager()
@@ -39,18 +43,26 @@ class MovieRentedActivity : AppCompatActivity() {
     private lateinit var loading: ProgressBar
     private lateinit var tvAlert:TextView
 
+    /**
+     * Metodo viene chiamato alla creazione dell'Activity.
+     * Inizializza le componenti e carica i dati dei film noleggiati.
+     *
+     * @param savedInstanceState Bundle contenente lo stato precedente dell'Activity (se presente).
+     */
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_movie_rented)
 
+        //setto il colore della status bar
         val statusBarColor = if (isDarkTheme()) {
             ContextCompat.getColor(this, R.color.black)
         } else {
             ContextCompat.getColor(this, R.color.gray_300)
         }
-
         window.statusBarColor = statusBarColor
+
 
         tvAlert = findViewById(R.id.tv_alert_norentmovie)
         recyclerViewRentedMovies = findViewById(R.id.recyclerView_rentedmovies)
@@ -67,11 +79,12 @@ class MovieRentedActivity : AppCompatActivity() {
 
         recyclerViewRentedMovies.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
+        //inizializzo l'adapter
         adapterRentedMovies = RentedMovieAdapter(emptyList())
         recyclerViewRentedMovies.adapter = adapterRentedMovies
 
 
-        db.checkFilmRentedValidity()
+        db.checkFilmRentedValidity() //verifico la validità dei titoli
 
         Log.d(TAG, "è gia stato inzializato: $flagInit")
         if(!flagInit) {
@@ -85,7 +98,9 @@ class MovieRentedActivity : AppCompatActivity() {
 
 
     /**
-     * restituisce la data di quando scade un titolo
+     * Restituisce la data di quando scade un titolo
+     * @param timestampFirebaseSeconds Timestamp in secondi dal quale calcolare la data di scadenza.
+     * @return La data di scadenza del noleggio.
      */
     private fun getExpirationDate(timestampFirebaseSeconds: Long): Date {
         val rentDate = Date(timestampFirebaseSeconds * 1000) // secondi in millisecondi
@@ -95,13 +110,17 @@ class MovieRentedActivity : AppCompatActivity() {
         return calendar.time
     }
 
+    /**
+     * Inizializza le informazioni sui titoli noleggiati.
+     * Recupera i dettagli dei film noleggiati dall'utente e li visualizza nel RecyclerView.
+     */
     private fun initInfo(){
         flagInit = true
         //ottengo informazioni per la copertina e titolo e durata, e data di scadenza
         if (uid != null) {
             db.getRentedMovies(uid) { rentedMovies ->
                 if(rentedMovies.isNotEmpty()){
-                    runOnUiThread{
+                    runOnUiThread{ //eseguo sul thread principale, perche non posso modificare le componenti grafici in thread secondari
                         tvAlert.visibility = View.GONE
                     }
                     val listRent: MutableList<MovieRentedInfo> = mutableListOf()
@@ -114,19 +133,19 @@ class MovieRentedActivity : AppCompatActivity() {
                         tmdbManager.getMovieDetails(idMovie, languageTag) { movieDetails ->
                             var contIdNull = 0;
                             if (movieDetails != null) {
-                                if(idMovie == 0) {
-                                    contIdNull++
+                                if(idMovie == 0) { //controllo se l'id non è valido
+                                    contIdNull++ //conto il numeri di id non validi
                                 }
-                                else{
+                                else{ //se valido recupero le inforazioni e la aggiungo alla lista dei film da visuallizzare
                                     val rentedMovieInfo = MovieRentedInfo(idMovie, expirationDate, movieDetails.posterPath, movieDetails.title, movieDetails.releaseDate)
                                     listRent.add(rentedMovieInfo)
                                 }
 
-                                if (listRent.size == rentedMovies.size-contIdNull) {
+                                if (listRent.size == rentedMovies.size-contIdNull) { //verifico di aver recuperato tutte le informazioni
                                     runOnUiThread {
-                                        loading.visibility = View.GONE
-                                        adapterRentedMovies = RentedMovieAdapter(listRent)
-                                        recyclerViewRentedMovies.adapter = adapterRentedMovies
+                                        loading.visibility = View.GONE //rimuovo il loading
+                                        adapterRentedMovies = RentedMovieAdapter(listRent) //carico nel adapter la lista dei film da visualizzare
+                                        recyclerViewRentedMovies.adapter = adapterRentedMovies // inserisco nella recyclerView l'elenco dei film da visualizzare
                                     }
                                 }
                             }
@@ -142,6 +161,11 @@ class MovieRentedActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Verifica se il tema attuale è scuro.
+     *
+     * @return True se il tema è scuro, False altrimenti.
+     */
     private fun isDarkTheme(): Boolean {
         val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         return mode == Configuration.UI_MODE_NIGHT_YES

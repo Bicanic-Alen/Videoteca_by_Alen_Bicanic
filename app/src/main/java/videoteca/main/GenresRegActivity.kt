@@ -17,6 +17,10 @@ import videoteca.main.api.DatabaseManager
 import videoteca.main.api.TMDB_Manager
 import java.util.Locale
 
+/**
+ * Activity per il salvataggio dei generi preferiti dell'utente al momento della registrazione.
+ * Permette all'utente di selezionare i generi preferiti tramite un'interfaccia di selezione.
+ */
 class GenresRegActivity : AppCompatActivity() {
     private lateinit var favAdapter: FavoriteGenreAdapter
     private lateinit var recyclerView: RecyclerView
@@ -26,10 +30,18 @@ class GenresRegActivity : AppCompatActivity() {
     private val tmdbManager = TMDB_Manager()
     private var TAG = "GenresRegFavoriteActivity"
     private val currentLocale: Locale = Locale.getDefault()
+
+    /**
+     * Metodo chiamato quando l'Activity viene creata.
+     * Inizializza l'interfaccia utente e recupera i generi dal TMDB per popolare l'adapter della RecyclerView.
+     *
+     * @param savedInstanceState Bundle contenente lo stato precedente dell'Activity (se presente).
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_genres_reg)
+        //seleziono il colore della status bar in base al tema
         val statusBarColor = if (isDarkTheme()) {
             ContextCompat.getColor(this, R.color.black)
         } else {
@@ -45,6 +57,7 @@ class GenresRegActivity : AppCompatActivity() {
         recyclerView.adapter = favAdapter
 
 
+        //estraggo la lista dei generi
 
         tmdbManager.getGenres(currentLocale.language){genreList ->
             this.runOnUiThread{
@@ -67,6 +80,11 @@ class GenresRegActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Verifica se il tema dell'applicazione è scuro o chiaro.
+     *
+     * @return true se il tema dell'applicazione è scuro, false altrimenti.
+     */
     private fun isDarkTheme(): Boolean {
         val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         return mode == Configuration.UI_MODE_NIGHT_YES
