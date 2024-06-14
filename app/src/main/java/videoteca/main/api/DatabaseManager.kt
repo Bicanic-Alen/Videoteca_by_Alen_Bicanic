@@ -16,11 +16,14 @@ import kotlinx.coroutines.tasks.await
 import videoteca.main.Domain.Movie.MovieResponse
 import videoteca.main.Domain.UserDB
 import videoteca.main.Domain.Videoteca
+import java.util.Date
+import kotlin.math.abs
 
 class DatabaseManager {
     private val db = FirebaseFirestore.getInstance()
     private val usersCollection = db.collection("Users")
     private val videotecaCollection = db.collection("videoteca")
+    private val TAG = "DatabaseManager"
 
     /**
      * Aggiunge un utente nel database firebase
@@ -256,7 +259,7 @@ class DatabaseManager {
         }
     }
 
-    private suspend fun getRentedMoviesAsync(idu: String): List<UserDB.RentedMoviesInfo> {
+    suspend fun getRentedMoviesAsync(idu: String): List<UserDB.RentedMoviesInfo> {
         val userDocumentReference = usersCollection.document(idu)
         return try {
             val documentSnapshot = userDocumentReference.get().await()
@@ -363,6 +366,91 @@ class DatabaseManager {
                 Log.e("DatabaseManager", "Errore durante il recupero del documento utente", e)
             }
     }
+
+
+    fun removeRentedMovie(uid: String, movieIds: List<Int>, callback: (Boolean) -> Unit) {
+        val userDocumentReference = usersCollection.document(uid)
+
+        userDocumentReference.get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val user = documentSnapshot.toObject(UserDB::class.java)
+                    val rentedMovies = user?.rentedMovies?.toMutableList() ?: mutableListOf()
+
+                    rentedMovies.removeAll { movie -> movieIds.contains(movie.id) }
+
+                    userDocumentReference.update("rentedMovies", rentedMovies)
+                        .addOnSuccessListener {
+                            Log.d("DatabaseManager", "Film noleggiato rimosso con successo")
+                            callback(true)
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("DatabaseManager", "Errore durante la rimozione del film noleggiato", e)
+                            callback(false)
+                        }
+                } else {
+                    Log.e("DatabaseManager", "Il documento utente non esiste")
+                    callback(false)
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("DatabaseManager", "Errore durante il recupero del documento utente", e)
+                callback(false)
+            }
+    }
+
+
+     fun checkFilmRentedValidity(){
+        val uid = AuthService.getCurrentUser()?.uid
+        if (uid != null) {
+            getRentedMovies(uid) { rentedMovies ->
+                Log.i(TAG, "Numero di elementi noleggiati: ${rentedMovies.size}")
+
+                val moviesToRemove = rentedMovies.filter { rented ->
+                    val rentDayTimestamp = rented.rentDay?.seconds ?: 0
+                    Log.i(TAG, "Film ID: ${rented.id}\nRent timestamp: $rentDayTimestamp")
+                    val isExpired = checkIfMoreThanSevenDaysPassed(rentDayTimestamp)
+                    Log.i(TAG, "Film scaduto: $isExpired")
+                    isExpired
+                }.map{it.id}
+
+                removeRentedMovie(uid, moviesToRemove) { success ->
+                    if (success) {
+                        Log.i(TAG, "Film rimossi con successo")
+                    } else {
+                        Log.e(TAG, "Errore nella rimozione dei film")
+                    }
+                }
+
+            }
+        }
+    }
+
+    /**
+     * controlla se dal timestamp fornito sono passati piu di 7 giorni
+     * @param timestampFirebaseSeconds richiede il timestamp in secondi nel formato Long
+     * @return Boolean, vero se sono passati piu di 7 giorni false altrimenti
+     */
+    private fun checkIfMoreThanSevenDaysPassed(timestampFirebaseSeconds: Long): Boolean {
+        val firebaseDate = Date(timestampFirebaseSeconds * 1000) // Converti secondi in millisecondi
+        val currentDate = Date()
+
+        val difference = differenceInDays(firebaseDate, currentDate)
+        Log.i(TAG,"diferenza di giorni: $difference")
+        return difference >= 7
+    }
+
+    /**
+     * calcola la differenza tra le due date
+     */
+
+    private fun differenceInDays(date1: Date, date2: Date): Long {
+        val diffInMillies = abs(date2.time - date1.time)
+        val diffInDays = diffInMillies / (1000 * 60 * 60 * 24)
+        return diffInDays
+    }
+
+
 
 
     /**

@@ -27,7 +27,7 @@ import kotlin.math.abs
 class MovieRentedActivity : AppCompatActivity() {
 
     private val db = DatabaseManager()
-    private val idu = AuthService.getCurrentUser()?.uid
+    private val uid = AuthService.getCurrentUser()?.uid
     private val tmdbManager = TMDB_Manager()
     private val currentLocale: Locale = Locale.getDefault()
     private val languageTag = currentLocale.toLanguageTag()
@@ -71,50 +71,18 @@ class MovieRentedActivity : AppCompatActivity() {
         recyclerViewRentedMovies.adapter = adapterRentedMovies
 
 
-        if (idu != null) {
-            //check dei film noleggiati validi e rimozione di quelli non validi
-            db.getRentedMovies(idu) { rentedMovies ->
-                for (rented in rentedMovies) {
-                    val rentDayTimestamp = rented.rentDay?.seconds ?: 0
-                    Log.i(TAG, "rentData tamp stamp: $rentDayTimestamp")
-                    if (checkIfMoreThanSevenDaysPassed(rentDayTimestamp)) {
-                        Log.i(TAG, "${checkIfMoreThanSevenDaysPassed(rentDayTimestamp)}")
-                        db.removeRentedMovie(idu, rented.id)
-                        initInfo()
-                    }
-                }
-            }
-        }
+        db.checkFilmRentedValidity()
+
         Log.d(TAG, "è gia stato inzializato: $flagInit")
         if(!flagInit) {
             Log.d(TAG, "sono nel if check flag")
             initInfo()
         }
+
     }
 
-    /**
-     * controlla se dal timestamp fornito sono passati piu di 7 giorni
-     * @param timestampFirebaseSeconds richiede il timestamp in secondi nel formato Long
-     * @return Boolean, vero se sono passati piu di 7 giorni false altrimenti
-     */
-    private fun checkIfMoreThanSevenDaysPassed(timestampFirebaseSeconds: Long): Boolean {
-        val firebaseDate = Date(timestampFirebaseSeconds * 1000) // Converti secondi in millisecondi
-        val currentDate = Date()
 
-        val difference = differenceInDays(firebaseDate, currentDate)
-        Log.i(TAG,"diferenza di giorni: $difference")
-        return difference >= 7
-    }
 
-    /**
-     * calcola la differenza tra le due date
-     */
-
-    private fun differenceInDays(date1: Date, date2: Date): Long {
-        val diffInMillies = abs(date2.time - date1.time)
-        val diffInDays = diffInMillies / (1000 * 60 * 60 * 24)
-        return diffInDays
-    }
 
     /**
      * restituisce la data di quando scade un titolo
@@ -130,8 +98,8 @@ class MovieRentedActivity : AppCompatActivity() {
     private fun initInfo(){
         flagInit = true
         //ottengo informazioni per la copertina e titolo e durata, e data di scadenza
-        if (idu != null) {
-            db.getRentedMovies(idu) { rentedMovies ->
+        if (uid != null) {
+            db.getRentedMovies(uid) { rentedMovies ->
                 if(rentedMovies.isNotEmpty()){
                     runOnUiThread{
                         tvAlert.visibility = View.GONE
