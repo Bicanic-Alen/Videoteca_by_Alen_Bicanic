@@ -75,7 +75,7 @@ class WatchlistFragment : Fragment() {
         loading.visibility = View.VISIBLE
         tvAlert = view.findViewById(R.id.tv_nowatchlistitems)
         tvAlert.visibility = View.INVISIBLE
-        updateFavoriteMoviesList()
+        updateWatchlistMoviesList()
     }
 
     /**
@@ -87,7 +87,7 @@ class WatchlistFragment : Fragment() {
         super.onResume()
         loading.visibility = View.VISIBLE
         tvAlert.visibility = View.INVISIBLE
-        updateFavoriteMoviesList()
+        updateWatchlistMoviesList()
     }
 
     /*
@@ -97,38 +97,56 @@ class WatchlistFragment : Fragment() {
      * Gestisce la visibilità della ProgressBar e del messaggio di avviso quando non ci sono film nella watchlist.
      */
 
-    private fun updateFavoriteMoviesList() {
+    private fun updateWatchlistMoviesList() {
         if (utenteId != null) {
-            db.getWatchlist(utenteId) { favMovie ->
-                if(favMovie.isNotEmpty()){
-                    Log.d(TAG, "ottengo lista watchlist: $favMovie")
-                    val listWatchlistMovies: MutableList<MovieDetails> = mutableListOf()
-                    for (item in favMovie) {
-                        tmdbApiManager.getMovieDetails(item, languageTag) { movieDetails ->
-                            if (movieDetails != null) {
-                                listWatchlistMovies.add(movieDetails)
-                                // Aggiorna l'adapter solo quando tutti i dettagli del film sono stati caricati
-                                if (listWatchlistMovies.size == favMovie.size) {
-                                    Log.d(TAG, "lista film post info dettagli: $listWatchlistMovies")
-                                    activity?.runOnUiThread {
-                                        tvAlert.visibility = View.GONE
-                                        loading.visibility = View.GONE
+            db.getWatchlist(utenteId) { watchlistMovies ->
+                activity?.runOnUiThread {
+                    if (watchlistMovies.isNotEmpty()) {
+                        tvAlert.visibility = View.GONE
+                        loading.visibility = View.VISIBLE // Mostra il loading prima di iniziare il recupero dei dati
+                    } else {
+                        tvAlert.visibility = View.VISIBLE
+                        loading.visibility = View.GONE
+                    }
+                }
+
+                // Utilizziamo una mappa per mantenere i dettagli dei film nella watchlist
+                val watchlistMoviesMap = mutableMapOf<Int, MovieDetails>()
+                var countToLoad = watchlistMovies.size
+
+                watchlistMovies.forEach { item ->
+                    tmdbApiManager.getMovieDetails(item, languageTag) { movieDetails ->
+                        if (movieDetails != null) {
+                            synchronized(watchlistMoviesMap) {
+                                watchlistMoviesMap[item] = movieDetails
+                            }
+                        }
+
+                        // Verifichiamo se abbiamo completato il caricamento di tutti i dettagli
+                        synchronized(this) {
+                            countToLoad--
+                            if (countToLoad == 0) {
+                                // Convertiamo la mappa in una lista ordinata
+                                val listWatchlistMovies = watchlistMovies.mapNotNull { watchlistMoviesMap[it] }
+
+                                activity?.runOnUiThread {
+                                    loading.visibility = View.GONE
+                                    if (listWatchlistMovies.isNotEmpty()) {
                                         adapterWatchlist = TwoMoviesForRowFavAdapter(listWatchlistMovies)
                                         recyclerViewWatchlist.adapter = adapterWatchlist
+                                    } else {
+                                        tvAlert.visibility = View.VISIBLE
+                                        recyclerViewWatchlist.adapter = null
                                     }
                                 }
                             }
                         }
                     }
-                }else{
-                    activity?.runOnUiThread{
-                        tvAlert.visibility = View.VISIBLE
-                        loading.visibility = View.GONE
-                    }
                 }
             }
         }
     }
+
 
 
 }

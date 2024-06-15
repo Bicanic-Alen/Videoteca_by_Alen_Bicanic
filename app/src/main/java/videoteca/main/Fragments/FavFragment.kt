@@ -92,37 +92,53 @@ class FavFragment : Fragment() {
      */
     private fun updateFavoriteMoviesList() {
         if (utenteId != null) {
-            db.getFavMovies(utenteId) { favMovie ->
-                if(favMovie.isNotEmpty()) {
-                    Log.d(TAG, "ottengo lista favoriti: ${favMovie.toString()}")
-                    val listFavMovies: MutableList<MovieDetails> = mutableListOf()
-                    for (item in favMovie) {
-                        tmdbApiManager.getMovieDetails(item, languageTag) { movieDetails ->
-                            if (movieDetails != null) {
-                                Log.d(TAG, "aggiungo film alla lista: ${movieDetails.title}")
-                                listFavMovies.add(movieDetails)
-                                // Aggiorna l'adapter solo quando tutti i dettagli del film sono stati caricati
-                                if (listFavMovies.size == favMovie.size) {
-                                    activity?.runOnUiThread {
-                                        tvAlert.visibility = View.GONE
-                                        loading.visibility = View.GONE
+            db.getFavMovies(utenteId) { favMovies ->
+                activity?.runOnUiThread {
+                    if (favMovies.isNotEmpty()) {
+                        tvAlert.visibility = View.GONE
+                        loading.visibility = View.VISIBLE // Mostra il loading prima di iniziare il recupero dei dati
+                    } else {
+                        tvAlert.visibility = View.VISIBLE
+                        loading.visibility = View.GONE
+                    }
+                }
+
+                // Utilizziamo una mappa per mantenere i dettagli dei film preferiti
+                val favMoviesMap = mutableMapOf<Int, MovieDetails>()
+                var countToLoad = favMovies.size
+
+                favMovies.forEach { item ->
+                    tmdbApiManager.getMovieDetails(item, languageTag) { movieDetails ->
+                        if (movieDetails != null) {
+                            synchronized(favMoviesMap) {
+                                favMoviesMap[item] = movieDetails
+                            }
+                        }
+
+                        // Verifichiamo se abbiamo completato il caricamento di tutti i dettagli
+                        synchronized(this) {
+                            countToLoad--
+                            if (countToLoad == 0) {
+                                // Convertiamo la mappa in una lista ordinata
+                                val listFavMovies = favMovies.mapNotNull { favMoviesMap[it] }
+
+                                activity?.runOnUiThread {
+                                    loading.visibility = View.GONE
+                                    if (listFavMovies.isNotEmpty()) {
                                         adapterFavorite = TwoMoviesForRowFavAdapter(listFavMovies)
                                         recyclerViewFavMovies.adapter = adapterFavorite
+                                    } else {
+                                        tvAlert.visibility = View.VISIBLE
+                                        recyclerViewFavMovies.adapter = null
                                     }
                                 }
                             }
                         }
                     }
-                }else{
-                    activity?.runOnUiThread{
-                        loading.visibility = View.GONE
-                        tvAlert.visibility = View.VISIBLE
-                    }
                 }
             }
         }
     }
-
 
 
 }
