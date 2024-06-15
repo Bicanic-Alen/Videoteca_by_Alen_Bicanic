@@ -162,6 +162,24 @@ class MovieRentedActivity : AppCompatActivity() {
     }
 
     /**
+     * Metodo chiamato quando l'Activity sta per diventare visibile all'utente.
+     * Inizializza le informazioni sui film noleggiati per essere mostrate.
+     */
+    override fun onResume() {
+        super.onResume()
+        initInfo()
+    }
+
+    /**
+     * Metodo chiamato quando l'Activity sta per essere riavviata da uno stato di stop.
+     * Re-inizializza le informazioni sui film noleggiati per essere mostrate.
+     */
+    override fun onRestart() {
+        super.onRestart()
+        initInfo()
+    }
+
+    /**
      * Verifica se il tema attuale è scuro.
      *
      * @return True se il tema è scuro, False altrimenti.

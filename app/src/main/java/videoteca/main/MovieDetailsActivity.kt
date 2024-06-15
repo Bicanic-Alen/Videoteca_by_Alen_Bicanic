@@ -528,11 +528,19 @@ class MovieDetailsActivity : AppCompatActivity() {
         return mode == Configuration.UI_MODE_NIGHT_YES
     }
 
+    /**
+     * Metodo chiamato quando l'Activity sta per diventare visibile all'utente.
+     * Aggiorna le viste in base allo stato corrente dell'Activity.
+     */
     override fun onResume() {
         super.onResume()
         initView()
     }
 
+    /**
+     * Metodo chiamato quando l'Activity sta per essere riavviata da uno stato di stop.
+     * Re-inizializza le viste in base allo stato corrente dell'Activity.
+     */
     override fun onRestart() {
         super.onRestart()
         initView()
