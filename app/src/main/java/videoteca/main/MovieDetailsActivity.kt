@@ -528,6 +528,17 @@ class MovieDetailsActivity : AppCompatActivity() {
         return mode == Configuration.UI_MODE_NIGHT_YES
     }
 
+    override fun onResume() {
+        super.onResume()
+        initView()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        initView()
+    }
+
+
 
     /**
      * Mostra un messaggio toast con il messaggio specificato.
