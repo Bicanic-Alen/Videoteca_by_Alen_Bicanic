@@ -114,52 +114,66 @@ class MovieRentedActivity : AppCompatActivity() {
      * Inizializza le informazioni sui titoli noleggiati.
      * Recupera i dettagli dei film noleggiati dall'utente e li visualizza nel RecyclerView.
      */
-    private fun initInfo(){
+    private fun initInfo() {
         flagInit = true
-        //ottengo informazioni per la copertina e titolo e durata, e data di scadenza
+        // Ottengo informazioni per la copertina, titolo, durata e data di scadenza
         if (uid != null) {
             db.getRentedMovies(uid) { rentedMovies ->
-                if(rentedMovies.isNotEmpty()){
-                    runOnUiThread{ //eseguo sul thread principale, perche non posso modificare le componenti grafici in thread secondari
+                runOnUiThread {
+                    if (rentedMovies.isNotEmpty()) {
                         tvAlert.visibility = View.GONE
+                        loading.visibility = View.VISIBLE // Mostra il loading prima di iniziare il recupero dei dati
+                    } else {
+                        tvAlert.visibility = View.VISIBLE
+                        loading.visibility = View.GONE
                     }
-                    val listRent: MutableList<MovieRentedInfo> = mutableListOf()
+                }
 
-                    for (rented in rentedMovies) {
-                        val idMovie = rented.id
-                        val dayRent = rented.rentDay?.seconds ?: 0
-                        val expirationDate = getExpirationDate(dayRent)
+                // Utilizzo un map per mantenere l'ordine originale dei film
+                val rentedMoviesMap = mutableMapOf<Int, MovieRentedInfo>()
+                var countToLoad = rentedMovies.size
 
-                        tmdbManager.getMovieDetails(idMovie, languageTag) { movieDetails ->
-                            var contIdNull = 0;
-                            if (movieDetails != null) {
-                                if(idMovie == 0) { //controllo se l'id non è valido
-                                    contIdNull++ //conto il numeri di id non validi
-                                }
-                                else{ //se valido recupero le inforazioni e la aggiungo alla lista dei film da visuallizzare
-                                    val rentedMovieInfo = MovieRentedInfo(idMovie, expirationDate, movieDetails.posterPath, movieDetails.title, movieDetails.releaseDate)
-                                    listRent.add(rentedMovieInfo)
-                                }
+                for (rented in rentedMovies) {
+                    val idMovie = rented.id
+                    val dayRent = rented.rentDay?.seconds ?: 0
+                    val expirationDate = getExpirationDate(dayRent)
 
-                                if (listRent.size == rentedMovies.size-contIdNull) { //verifico di aver recuperato tutte le informazioni
-                                    runOnUiThread {
-                                        loading.visibility = View.GONE //rimuovo il loading
-                                        adapterRentedMovies = RentedMovieAdapter(listRent) //carico nel adapter la lista dei film da visualizzare
-                                        recyclerViewRentedMovies.adapter = adapterRentedMovies // inserisco nella recyclerView l'elenco dei film da visualizzare
-                                    }
+                    tmdbManager.getMovieDetails(idMovie, languageTag) { movieDetails ->
+                        if (movieDetails != null) {
+                            if (idMovie != 0) { // Controllo se l'id è valido
+                                val rentedMovieInfo = MovieRentedInfo(
+                                    idMovie,
+                                    expirationDate,
+                                    movieDetails.posterPath,
+                                    movieDetails.title,
+                                    movieDetails.releaseDate
+                                )
+                                synchronized(rentedMoviesMap) {
+                                    rentedMoviesMap[idMovie] = rentedMovieInfo
                                 }
                             }
                         }
-                    }
-                }else{
-                    runOnUiThread {
-                        loading.visibility = View.GONE
-                        tvAlert.visibility = View.VISIBLE
+
+                        // Aggiorna l'interfaccia solo quando hai recuperato tutti i dettagli
+                        synchronized(this) {
+                            countToLoad--
+                            if (countToLoad == 0) {
+                                // Ordino i film in base all'ordine originale e li aggiungo alla lista finale
+                                val listRent = rentedMovies.mapNotNull { rentedMoviesMap[it.id] }
+
+                                runOnUiThread {
+                                    loading.visibility = View.GONE
+                                    adapterRentedMovies = RentedMovieAdapter(listRent)
+                                    recyclerViewRentedMovies.adapter = adapterRentedMovies
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
     }
+
 
     /**
      * Metodo chiamato quando l'Activity sta per diventare visibile all'utente.
