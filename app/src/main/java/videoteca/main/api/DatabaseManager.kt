@@ -424,11 +424,15 @@ class DatabaseManager {
                     isExpired
                 }.map{it.id}
 
-                removeRentedMovie(uid, moviesToRemove) { success ->
-                    if (success) {
-                        Log.i(TAG, "Film rimossi con successo")
-                    } else {
-                        Log.e(TAG, "Errore nella rimozione dei film")
+                Log.i(TAG, "Film da rimuovere = ${moviesToRemove.toString()}")
+
+                if(moviesToRemove.isNotEmpty()){
+                    removeRentedMovie(uid, moviesToRemove) { success ->
+                        if (success) {
+                            Log.i(TAG, "Film rimossi con successo")
+                        } else {
+                            Log.e(TAG, "Errore nella rimozione dei film")
+                        }
                     }
                 }
 
@@ -445,6 +449,7 @@ class DatabaseManager {
         val firebaseDate = Date(timestampFirebaseSeconds * 1000) // Converti secondi in millisecondi
         val currentDate = Date()
 
+        Log.i(TAG, "data noleggio film = ${firebaseDate}, data odierna = ${currentDate}")
         val difference = differenceInDays(firebaseDate, currentDate)
         Log.i(TAG,"diferenza di giorni: $difference")
         return difference >= 7
