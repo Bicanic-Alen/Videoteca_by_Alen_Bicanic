@@ -71,6 +71,15 @@ import kotlin.math.abs
 
         window.statusBarColor = statusBarColor
 
+       // Impostazione del colore della NavigationBar
+       val navigationBarColor = if (isDarkTheme()) {
+           ContextCompat.getColor(this, R.color.black)
+       } else {
+           ContextCompat.getColor(this, R.color.gray_300)
+       }
+       window.navigationBarColor = navigationBarColor
+
+
 
         // configurazione  della navbar per la navigazione tra i diversi fragment,
         // e modifico il titolo della toolbar in base alla "pagina" selezionata
