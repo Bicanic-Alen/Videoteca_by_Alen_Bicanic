@@ -60,4 +60,7 @@
     <string name="no_movies_have_been_added_to_the_watchlist_yet">No movies have been added to the watchlist yet.</string>
     <string name="no_favorite_movies_have_been_selected_yet">No favorite movies have been selected yet.</string>
     <string name="there_are_currently_no_rented_movies">There are currently no rented movies.</string>
+    <string name="no_email_has_been_entered">No email has been entered</string>
+    <string name="send_password_reset_e_mail_send_with_success">Send password reset e-mail with success</string>
+    <string name="failed_to_send_password_reset_e_mail">Failed to send password reset e-mail, retry</string>
 </resources>
